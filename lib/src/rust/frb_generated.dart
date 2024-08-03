@@ -74,7 +74,7 @@ abstract class RustLibApi extends BaseApi {
 
   FlowControl crateApiSerialFlowControlFrom({required FlowControl flowControl});
 
-  Future<List<SerialPortInfo>> crateApiSerialListAvailablePorts();
+  List<SerialPortInfo> crateApiSerialListAvailablePorts();
 
   Parity crateApiSerialParityFrom({required Parity parity});
 
@@ -152,12 +152,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<List<SerialPortInfo>> crateApiSerialListAvailablePorts() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
+  List<SerialPortInfo> crateApiSerialListAvailablePorts() {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_serial_port_info,

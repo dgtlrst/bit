@@ -108,16 +108,15 @@ fn wire__crate__api__serial__flow_control_from_impl(
     )
 }
 fn wire__crate__api__serial__list_available_ports_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
     data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "list_available_ports",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
         },
         move || {
             let message = unsafe {
@@ -130,14 +129,12 @@ fn wire__crate__api__serial__list_available_ports_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
-                        let output_ok = crate::api::serial::list_available_ports()?;
-                        Ok(output_ok)
-                    })(),
-                )
-            }
+            transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                (move || {
+                    let output_ok = crate::api::serial::list_available_ports()?;
+                    Ok(output_ok)
+                })(),
+            )
         },
     )
 }
@@ -497,7 +494,6 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        3 => wire__crate__api__serial__list_available_ports_impl(port, ptr, rust_vec_len, data_len),
         9 => wire__crate__api__simple__init_app_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
@@ -513,6 +509,7 @@ fn pde_ffi_dispatcher_sync_impl(
     match func_id {
         1 => wire__crate__api__serial__data_bits_from_impl(ptr, rust_vec_len, data_len),
         2 => wire__crate__api__serial__flow_control_from_impl(ptr, rust_vec_len, data_len),
+        3 => wire__crate__api__serial__list_available_ports_impl(ptr, rust_vec_len, data_len),
         4 => wire__crate__api__serial__parity_from_impl(ptr, rust_vec_len, data_len),
         5 => wire__crate__api__serial__serial_port_info_new_impl(ptr, rust_vec_len, data_len),
         6 => wire__crate__api__serial__stop_bits_from_impl(ptr, rust_vec_len, data_len),
