@@ -90,15 +90,27 @@ impl SerialPortInfo {
             flow_control
         }
     }
-
-    // pub fn convert(&self) -> serialport::SerialPortInfo {
-    //     panic!("Not implemented yet");
-    // }
 }
 
-pub fn list_available_ports() -> Result<Vec<serialport::SerialPortInfo>, Error> {
+// list available ports
+pub fn list_available_ports() -> Result<Vec<SerialPortInfo>, Error> {
     let ports = serialport::available_ports()?;
-    Ok(ports)
+    let mut serial_ports = Vec::new();
+
+    for port in ports {
+        let serial_port = SerialPortInfo::new(
+            port.port_name,
+            9600,
+            DataBits::from(DataBits::Eight),
+            Parity::from(Parity::None),
+            StopBits::from(StopBits::One),
+            FlowControl::from(FlowControl::None)
+        );
+
+        serial_ports.push(serial_port);
+    }
+
+    Ok(serial_ports)
 }
 
 fn main() {
@@ -106,7 +118,7 @@ fn main() {
         Ok(ports) => {
             if !ports.is_empty() {
                 for p in ports {
-                    println!("Port: {}", p.port_name);
+                    println!("Port: {}", p.name);
                 }
             } else {
                 println!("No ports found.");
@@ -128,8 +140,13 @@ mod tests {
     #[test]
     fn test_list_available_ports() {
         let ports = list_available_ports().unwrap();
-        println!("{:?}", ports);
+        // println!("{:?}", ports);
+        // print the ports
+        for p in &ports {
+            println!("Port: {}", p.name);
+        }
 
+        // assert that ports is not empty
         assert!(!ports.is_empty());
     }
 }

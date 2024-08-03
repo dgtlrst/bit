@@ -59,7 +59,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => 1155718394;
+  int get rustContentHash => -1611355904;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -70,22 +70,29 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  DataBits crateApiSerialDataBitsFrom({required DataBits dataBits});
+
+  FlowControl crateApiSerialFlowControlFrom({required FlowControl flowControl});
+
   Future<List<SerialPortInfo>> crateApiSerialListAvailablePorts();
+
+  Parity crateApiSerialParityFrom({required Parity parity});
+
+  SerialPortInfo crateApiSerialSerialPortInfoNew(
+      {required String name,
+      required int speed,
+      required DataBits dataBits,
+      required Parity parity,
+      required StopBits stopBits,
+      required FlowControl flowControl});
+
+  StopBits crateApiSerialStopBitsFrom({required StopBits stopBits});
 
   String crateApiSimpleGreet({required String name});
 
   String crateApiSimpleHello({required String a});
 
   Future<void> crateApiSimpleInitApp();
-
-  RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_SerialPortInfo;
-
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_SerialPortInfo;
-
-  CrossPlatformFinalizerArg
-      get rust_arc_decrement_strong_count_SerialPortInfoPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -97,16 +104,63 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  DataBits crateApiSerialDataBitsFrom({required DataBits dataBits}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_data_bits(dataBits, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_data_bits,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSerialDataBitsFromConstMeta,
+      argValues: [dataBits],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSerialDataBitsFromConstMeta => const TaskConstMeta(
+        debugName: "data_bits_from",
+        argNames: ["dataBits"],
+      );
+
+  @override
+  FlowControl crateApiSerialFlowControlFrom(
+      {required FlowControl flowControl}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_flow_control(flowControl, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_flow_control,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSerialFlowControlFromConstMeta,
+      argValues: [flowControl],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSerialFlowControlFromConstMeta =>
+      const TaskConstMeta(
+        debugName: "flow_control_from",
+        argNames: ["flowControl"],
+      );
+
+  @override
   Future<List<SerialPortInfo>> crateApiSerialListAvailablePorts() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 1, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo,
+        decodeSuccessData: sse_decode_list_serial_port_info,
         decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiSerialListAvailablePortsConstMeta,
@@ -122,12 +176,100 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Parity crateApiSerialParityFrom({required Parity parity}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_parity(parity, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_parity,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSerialParityFromConstMeta,
+      argValues: [parity],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSerialParityFromConstMeta => const TaskConstMeta(
+        debugName: "parity_from",
+        argNames: ["parity"],
+      );
+
+  @override
+  SerialPortInfo crateApiSerialSerialPortInfoNew(
+      {required String name,
+      required int speed,
+      required DataBits dataBits,
+      required Parity parity,
+      required StopBits stopBits,
+      required FlowControl flowControl}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(name, serializer);
+        sse_encode_u_32(speed, serializer);
+        sse_encode_data_bits(dataBits, serializer);
+        sse_encode_parity(parity, serializer);
+        sse_encode_stop_bits(stopBits, serializer);
+        sse_encode_flow_control(flowControl, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_serial_port_info,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSerialSerialPortInfoNewConstMeta,
+      argValues: [name, speed, dataBits, parity, stopBits, flowControl],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSerialSerialPortInfoNewConstMeta =>
+      const TaskConstMeta(
+        debugName: "serial_port_info_new",
+        argNames: [
+          "name",
+          "speed",
+          "dataBits",
+          "parity",
+          "stopBits",
+          "flowControl"
+        ],
+      );
+
+  @override
+  StopBits crateApiSerialStopBitsFrom({required StopBits stopBits}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_stop_bits(stopBits, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_stop_bits,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSerialStopBitsFromConstMeta,
+      argValues: [stopBits],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSerialStopBitsFromConstMeta => const TaskConstMeta(
+        debugName: "stop_bits_from",
+        argNames: ["stopBits"],
+      );
+
+  @override
   String crateApiSimpleGreet({required String name}) {
     return handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(name, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -150,7 +292,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(a, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -173,7 +315,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
+            funcId: 9, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -190,34 +332,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         argNames: [],
       );
 
-  RustArcIncrementStrongCountFnType
-      get rust_arc_increment_strong_count_SerialPortInfo => wire
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo;
-
-  RustArcDecrementStrongCountFnType
-      get rust_arc_decrement_strong_count_SerialPortInfo => wire
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo;
-
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return AnyhowException(raw as String);
-  }
-
-  @protected
-  SerialPortInfo
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return SerialPortInfoImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  SerialPortInfo
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return SerialPortInfoImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -227,20 +345,67 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<SerialPortInfo>
-      dco_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          dynamic raw) {
+  DataBits dco_decode_data_bits(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>)
-        .map(
-            dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo)
-        .toList();
+    return DataBits.values[raw as int];
+  }
+
+  @protected
+  FlowControl dco_decode_flow_control(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return FlowControl.values[raw as int];
+  }
+
+  @protected
+  int dco_decode_i_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
   }
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
+  }
+
+  @protected
+  List<SerialPortInfo> dco_decode_list_serial_port_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_serial_port_info).toList();
+  }
+
+  @protected
+  Parity dco_decode_parity(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Parity.values[raw as int];
+  }
+
+  @protected
+  SerialPortInfo dco_decode_serial_port_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return SerialPortInfo.raw(
+      name: dco_decode_String(arr[0]),
+      speed: dco_decode_u_32(arr[1]),
+      dataBits: dco_decode_data_bits(arr[2]),
+      parity: dco_decode_parity(arr[3]),
+      stopBits: dco_decode_stop_bits(arr[4]),
+      flowControl: dco_decode_flow_control(arr[5]),
+    );
+  }
+
+  @protected
+  StopBits dco_decode_stop_bits(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return StopBits.values[raw as int];
+  }
+
+  @protected
+  int dco_decode_u_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
   }
 
   @protected
@@ -256,34 +421,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BigInt dco_decode_usize(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeU64(raw);
-  }
-
-  @protected
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_String(deserializer);
     return AnyhowException(inner);
-  }
-
-  @protected
-  SerialPortInfo
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return SerialPortInfoImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
-  }
-
-  @protected
-  SerialPortInfo
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return SerialPortInfoImpl.frbInternalSseDecode(
-        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
   @protected
@@ -294,19 +435,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<SerialPortInfo>
-      sse_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          SseDeserializer deserializer) {
+  DataBits sse_decode_data_bits(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return DataBits.values[inner];
+  }
 
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <SerialPortInfo>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(
-          sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-              deserializer));
-    }
-    return ans_;
+  @protected
+  FlowControl sse_decode_flow_control(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return FlowControl.values[inner];
+  }
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getInt32();
   }
 
   @protected
@@ -314,6 +459,57 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
     return deserializer.buffer.getUint8List(len_);
+  }
+
+  @protected
+  List<SerialPortInfo> sse_decode_list_serial_port_info(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <SerialPortInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_serial_port_info(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  Parity sse_decode_parity(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return Parity.values[inner];
+  }
+
+  @protected
+  SerialPortInfo sse_decode_serial_port_info(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_speed = sse_decode_u_32(deserializer);
+    var var_dataBits = sse_decode_data_bits(deserializer);
+    var var_parity = sse_decode_parity(deserializer);
+    var var_stopBits = sse_decode_stop_bits(deserializer);
+    var var_flowControl = sse_decode_flow_control(deserializer);
+    return SerialPortInfo.raw(
+        name: var_name,
+        speed: var_speed,
+        dataBits: var_dataBits,
+        parity: var_parity,
+        stopBits: var_stopBits,
+        flowControl: var_flowControl);
+  }
+
+  @protected
+  StopBits sse_decode_stop_bits(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return StopBits.values[inner];
+  }
+
+  @protected
+  int sse_decode_u_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint32();
   }
 
   @protected
@@ -325,18 +521,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_decode_unit(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  BigInt sse_decode_usize(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getBigUint64();
-  }
-
-  @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
   }
 
   @protected
@@ -353,41 +537,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          SerialPortInfo self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as SerialPortInfoImpl).frbInternalSseEncode(move: true),
-        serializer);
-  }
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          SerialPortInfo self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-        (self as SerialPortInfoImpl).frbInternalSseEncode(move: null),
-        serializer);
-  }
-
-  @protected
   void sse_encode_String(String self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
   }
 
   @protected
-  void
-      sse_encode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          List<SerialPortInfo> self, SseSerializer serializer) {
+  void sse_encode_data_bits(DataBits self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
-          item, serializer);
-    }
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_flow_control(FlowControl self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putInt32(self);
   }
 
   @protected
@@ -396,6 +566,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putUint8List(self);
+  }
+
+  @protected
+  void sse_encode_list_serial_port_info(
+      List<SerialPortInfo> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_serial_port_info(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_parity(Parity self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_serial_port_info(
+      SerialPortInfo self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_u_32(self.speed, serializer);
+    sse_encode_data_bits(self.dataBits, serializer);
+    sse_encode_parity(self.parity, serializer);
+    sse_encode_stop_bits(self.stopBits, serializer);
+    sse_encode_flow_control(self.flowControl, serializer);
+  }
+
+  @protected
+  void sse_encode_stop_bits(StopBits self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_u_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint32(self);
   }
 
   @protected
@@ -410,40 +620,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_usize(BigInt self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putBigUint64(self);
-  }
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
-  }
-
-  @protected
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
   }
-}
-
-@sealed
-class SerialPortInfoImpl extends RustOpaque implements SerialPortInfo {
-  // Not to be used by end users
-  SerialPortInfoImpl.frbInternalDcoDecode(List<dynamic> wire)
-      : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  SerialPortInfoImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_SerialPortInfo,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_SerialPortInfo,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_SerialPortInfoPtr,
-  );
 }
