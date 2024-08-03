@@ -44,8 +44,10 @@ class _CreateSettingsState extends State<Settings> {
     } on IndexError catch (e) {
       print("No valid ports, Need to handle this, $e");
       rethrow;
+    } on RangeError catch (e) {
+      print("No valid ports, Need to handle this, $e");
+      rethrow;
     }
-
     var name = DropdownButton(
         value: _name,
         items: items9,
