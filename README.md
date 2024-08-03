@@ -1,2 +1,2 @@
 # bit
-serial terminal
+no.
