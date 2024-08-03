@@ -8,3 +8,4 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = "=2.1.0"
+serialport = "4.4.0"

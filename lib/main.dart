@@ -1,3 +1,4 @@
+import 'package:bit/src/rust/api/serial.dart';
 import 'package:flutter/material.dart';
 import 'package:bit/src/rust/frb_generated.dart';
 
