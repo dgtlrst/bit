@@ -1,4 +1,24 @@
+use flutter_rust_bridge::frb;
 use serialport::Error;
+
+#[flutter_rust_bridge::frb(opaque)]
+pub struct Echo(Vec<String>);
+impl Echo {
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn new() -> Self {
+        Echo(Vec::<String>::new())
+    }
+
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn push(&mut self, s: &String) {
+        self.0.push(s.to_string());
+        println!("Received in Rust: {:?}", s);
+    }
+
+    pub fn pop(&mut self) -> Option<String> {
+        return self.0.pop();
+    }
+}
 
 pub enum DataBits {
     Five = 5,

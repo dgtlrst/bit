@@ -22,18 +22,6 @@ class _CreateSettingsState extends State<Settings> {
   StopBits _stopBit = StopBits.one;
   FlowControl _flowControl = FlowControl.none;
 
-  @override
-  void initState() {
-    super.initState();
-    // _speed_controller = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _speed_controller.dispose();
-    super.dispose();
-  }
-
   GridView settingsGrid() {
     List<SerialPortInfo> serialPortInfo = listAvailablePorts();
     List<DropdownMenuItem<String>> items9 = serialPortInfo.map((v) {
