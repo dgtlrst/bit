@@ -13,6 +13,8 @@ List<SerialPortInfo> listAvailablePorts() =>
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Echo>>
 abstract class Echo implements RustOpaqueInterface {
+  Stream<String> createStream();
+
   factory Echo() => RustLib.instance.api.crateApiSerialEchoNew();
 
   Future<String?> pop();

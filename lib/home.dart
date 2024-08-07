@@ -23,7 +23,8 @@ class _CreateHomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    stream = create_stream();
+    //stream = create_stream();
+    stream = _rust.createStream();
     listener = stream.listen(streamHandler());
   }
 
