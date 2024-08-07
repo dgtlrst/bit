@@ -52,8 +52,10 @@ impl ThreadController {
                     msgs_missed_since_start.to_string()
                 );
                 for i in 0..msgs_missed_since_start {
-                    self.stream
-                        .add(format!("Thread: {:?}: Tick", self.thread_id));
+                    self.stream.add(format!(
+                        "Thread: {:?}: {:?}",
+                        self.thread_id, time_since_start
+                    ));
                     count += 1;
                 }
             }

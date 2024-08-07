@@ -57,7 +57,7 @@ class _CreateTerminalState extends State<Terminal>
         TabBar(
           controller: _tabController,
           isScrollable: true,
-          tabs: [Text("IO"), Text("Settings")],
+          tabs: [Text("IO"), Icon(Icons.settings)],
         ),
         Expanded(
             child: TabBarView(controller: _tabController, children: [

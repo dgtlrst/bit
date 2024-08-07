@@ -32,6 +32,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
   late Controller controller;
   final ScrollController _scrollController = ScrollController();
   final FocusNode myFocus = FocusNode();
+  double lastOffset = 0.0;
   @override
   void initState() {
     super.initState();
@@ -53,9 +54,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
   void Function(String) streamHandler() {
     return (String data) {
       if (mounted) {
-        setState(() {
-          _scrollController.jumpTo(0.0);
-        });
+        setState(() {});
         print("Length of _data: ${_data.length}");
         print("Receiving Data in Stream: $data");
       }
