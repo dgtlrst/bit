@@ -9,6 +9,7 @@ use rand::prelude::*;
 use serialport::Error;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread::JoinHandle;
+
 struct ThreadController {
     thread_id: u32,
     stream: StreamSink<String>,
@@ -24,6 +25,8 @@ impl ThreadController {
     }
 
     fn main(&self) {
+        let start = std::time::Instant::now();
+        let mut count = 0;
         loop {
             let received_data = self.receiver.try_recv();
             match received_data {
@@ -39,9 +42,23 @@ impl ThreadController {
                     }
                 },
             }
-            self.stream
-                .add(format!("Thread: {:?}: Tick", self.thread_id));
-            std::thread::sleep(Duration::from_millis(1000))
+            let instant = std::time::Instant::now();
+            let time_since_start = instant.duration_since(start);
+            let msgs_missed_since_start = time_since_start.as_secs() - count;
+            if msgs_missed_since_start > 0 {
+                println!(
+                    "{:?} {:?}",
+                    time_since_start.as_secs().to_string(),
+                    msgs_missed_since_start.to_string()
+                );
+                for i in 0..msgs_missed_since_start {
+                    self.stream
+                        .add(format!("Thread: {:?}: Tick", self.thread_id));
+                    count += 1;
+                }
+            }
+
+            std::thread::sleep(Duration::from_millis(10))
         }
     }
 }
