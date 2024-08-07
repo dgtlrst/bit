@@ -208,14 +208,12 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         255, 200, 220, 224); // Slightly different TextField text color
     const Color mainTextColor = Color.fromARGB(
         255, 144, 168, 174); // Slightly different Main content text color
-    return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-            child: Center(child: settingsGrid()),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Expanded(
+          child: Center(child: settingsGrid()),
+        ),
+      ],
     );
   }
 }

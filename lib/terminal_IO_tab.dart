@@ -12,8 +12,12 @@ class TerminalIOTab extends StatefulWidget {
   final Controller controller;
   final int threadId;
   final List<String> dataStore;
+  final Stream<String> stream;
+  final StreamSubscription<String> dataStoreUpdater;
   const TerminalIOTab(
       {super.key,
+      required this.dataStoreUpdater,
+      required this.stream,
       required this.controller,
       required this.threadId,
       required this.dataStore});
@@ -24,38 +28,38 @@ class TerminalIOTab extends StatefulWidget {
 class _CreateTerminalIOTabState extends State<TerminalIOTab>
     with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
-  late Stream<String?> stream;
-  late StreamSubscription<String?> listener;
+  late Stream<String> stream;
+  late StreamSubscription<String> listener;
   late List<String> _data;
-  final Controller controller = Controller();
-  ScrollController _scrollController = ScrollController();
+  late Controller controller;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _data = widget.dataStore;
-    controller.setNewThreadId(threadId: widget.threadId);
-    stream = controller.createStream();
+    controller = widget.controller;
+    stream = widget.stream;
     print("Thread Id in Dart: ${widget.threadId}");
     listener = stream.listen(streamHandler());
+    widget.dataStoreUpdater.resume();
   }
 
   @override
   void dispose() {
+    widget.dataStoreUpdater.pause();
+    listener.cancel();
     super.dispose();
   }
 
-  void Function(String?)? streamHandler() {
-    return (String? data) {
+  void Function(String) streamHandler() {
+    return (String data) {
       if (mounted) {
-        if (data != null) {
-          setState(() {
-            _data.add(data);
-            _scrollController.jumpTo(0.0);
-          });
-          print("Length of _data: ${_data.length}");
-          print("Receiving Data in Stream: $data");
-        }
+        setState(() {
+          _scrollController.jumpTo(0.0);
+        });
+        print("Length of _data: ${_data.length}");
+        print("Receiving Data in Stream: $data");
       }
     };
   }

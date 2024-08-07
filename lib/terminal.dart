@@ -21,17 +21,31 @@ class _CreateTerminalState extends State<Terminal>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> dataStore = [];
+  late Stream<String> stream;
+  late StreamSubscription<String> listener;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    widget.controller.setNewThreadId(threadId: widget.threadId);
+    stream = widget.controller.createStream().asBroadcastStream();
+    listener = stream.listen(streamHandler());
+    listener.pause();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void Function(String) streamHandler() {
+    return (String data) {
+      if (mounted) {
+        dataStore.add(data);
+      }
+    };
   }
 
   @override
@@ -45,6 +59,8 @@ class _CreateTerminalState extends State<Terminal>
         Expanded(
             child: TabBarView(controller: _tabController, children: [
           TerminalIOTab(
+            dataStoreUpdater: listener,
+            stream: stream,
             controller: widget.controller,
             threadId: widget.threadId,
             dataStore: dataStore,
