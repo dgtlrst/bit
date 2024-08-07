@@ -2,7 +2,6 @@ import 'dart:ffi';
 
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:flutter/material.dart';
-import 'package:bit/src/rust/api/simple.dart';
 import 'package:flutter/widgets.dart';
 
 import 'sidepanel.dart'; // side panel

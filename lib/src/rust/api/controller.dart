@@ -6,8 +6,9 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `get_new_thread_id`, `new`, `test_msg`
+// These functions are ignored because they are not marked as `pub`: `get_new_thread_id`, `main`, `new`
 // These types are ignored because they are not used by any `pub` functions: `ThreadController`
+// These functions have error during generation (see debug logs or enable `stop_on_error: true` for more details): `end_stream`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>
 abstract class Controller implements RustOpaqueInterface {

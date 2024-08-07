@@ -1,43 +1,6 @@
 use crate::frb_generated::StreamSink;
 use anyhow::Result;
-use flutter_rust_bridge::frb;
 use serialport::Error;
-
-#[flutter_rust_bridge::frb(opaque)]
-pub struct Echo {
-    data: Vec<String>,
-    stream: Option<StreamSink<String>>,
-}
-impl Echo {
-    #[flutter_rust_bridge::frb(sync)]
-    pub fn new() -> Self {
-        Echo {
-            data: Vec::<String>::new(),
-            stream: None,
-        }
-    }
-
-    #[flutter_rust_bridge::frb(sync)]
-    pub fn push(&mut self, s: &String) -> Result<()> {
-        self.data.push(s.to_string());
-        match &self.stream {
-            Some(stream) => {
-                stream.add(s.to_string());
-            }
-            None => {}
-        }
-        println!("Received in Rust: {:?}", s);
-        Ok(())
-    }
-
-    pub fn pop(&mut self) -> Option<String> {
-        return self.data.pop();
-    }
-
-    pub fn create_stream(&mut self, stream_sink: StreamSink<String>) {
-        self.stream = Some(stream_sink);
-    }
-}
 
 pub enum DataBits {
     Five = 5,

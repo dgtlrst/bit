@@ -4,7 +4,6 @@ import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/src/rust/frb_generated.dart';
 import 'package:flutter/material.dart';
-import 'package:bit/src/rust/api/simple.dart';
 
 import 'sidepanel.dart'; // side panel
 
@@ -16,7 +15,6 @@ class HomePage extends StatefulWidget {
 
 class _CreateHomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
-  final Echo _rust = Echo();
   late Stream<String?> stream;
   late StreamSubscription<String?> listener;
   final List<String> _data = [];
@@ -28,8 +26,6 @@ class _CreateHomePageState extends State<HomePage> {
     super.initState();
     stream = controller.createStream();
     thread_id = controller.getLatestThreadCreated();
-    //stream = create_stream();
-    //stream = _rust.createStream();
     listener = stream.listen(streamHandler());
   }
 
@@ -43,13 +39,6 @@ class _CreateHomePageState extends State<HomePage> {
         print("Receiving Data in Stream: $data");
       }
     };
-  }
-
-  Stream<String?> create_stream() async* {
-    while (true) {
-      String? s = await _rust.pop();
-      yield s;
-    }
   }
 
   Null Function(dynamic) onSubmitted() {
@@ -66,27 +55,6 @@ class _CreateHomePageState extends State<HomePage> {
     }).toList();
     return Expanded(child: Column(children: widgets));
   }
-
-  // Widget create_stream_widget() {
-  //   return Expanded(
-  //       child: StreamBuilder(
-  //     stream: create_stream(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.hasData) {
-  //         // Display the data from the stream
-  //         return Text('Number: ${snapshot.data}');
-  //       } else if (snapshot.hasError) {
-  //         // Handle error case
-  //         return Text('Error: ${snapshot.error}');
-  //       } else {
-  //         print(
-  //             "${snapshot.hasData}, ${snapshot.hasError}, ${snapshot.connectionState}");
-  //         // Handle loading or initial state
-  //         return CircularProgressIndicator.adaptive();
-  //       }
-  //     },
-  //   ));
-  // }
 
   @override
   Widget build(BuildContext context) {

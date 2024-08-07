@@ -11,17 +11,6 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 List<SerialPortInfo> listAvailablePorts() =>
     RustLib.instance.api.crateApiSerialListAvailablePorts();
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Echo>>
-abstract class Echo implements RustOpaqueInterface {
-  Stream<String> createStream();
-
-  factory Echo() => RustLib.instance.api.crateApiSerialEchoNew();
-
-  Future<String?> pop();
-
-  void push({required String s});
-}
-
 enum DataBits {
   five,
   six,

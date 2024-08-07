@@ -8,7 +8,6 @@
 
 import 'api/controller.dart';
 import 'api/serial.dart';
-import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -25,9 +24,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ControllerPtr =>
       wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController;
 
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_EchoPtr => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho;
-
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
@@ -37,18 +33,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           dynamic raw);
 
   @protected
-  Echo
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          dynamic raw);
-
-  @protected
   Controller
       dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-          dynamic raw);
-
-  @protected
-  Echo
-      dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
           dynamic raw);
 
   @protected
@@ -59,11 +45,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   Controller
       dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-          dynamic raw);
-
-  @protected
-  Echo
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
           dynamic raw);
 
   @protected
@@ -86,9 +67,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<SerialPortInfo> dco_decode_list_serial_port_info(dynamic raw);
-
-  @protected
-  String? dco_decode_opt_String(dynamic raw);
 
   @protected
   Parity dco_decode_parity(dynamic raw);
@@ -120,18 +98,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
           SseDeserializer deserializer);
 
   @protected
-  Echo
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          SseDeserializer deserializer);
-
-  @protected
   Controller
       sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-          SseDeserializer deserializer);
-
-  @protected
-  Echo
-      sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
           SseDeserializer deserializer);
 
   @protected
@@ -142,11 +110,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   Controller
       sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-          SseDeserializer deserializer);
-
-  @protected
-  Echo
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
           SseDeserializer deserializer);
 
   @protected
@@ -171,9 +134,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<SerialPortInfo> sse_decode_list_serial_port_info(
       SseDeserializer deserializer);
-
-  @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
   Parity sse_decode_parity(SseDeserializer deserializer);
@@ -210,18 +170,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          Echo self, SseSerializer serializer);
-
-  @protected
-  void
       sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           Controller self, SseSerializer serializer);
-
-  @protected
-  void
-      sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          Echo self, SseSerializer serializer);
 
   @protected
   void
@@ -232,11 +182,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
       sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           Controller self, SseSerializer serializer);
-
-  @protected
-  void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          Echo self, SseSerializer serializer);
 
   @protected
   void sse_encode_StreamSink_String_Sse(
@@ -261,9 +206,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_serial_port_info(
       List<SerialPortInfo> self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
   void sse_encode_parity(Parity self, SseSerializer serializer);
@@ -307,18 +249,6 @@ class RustLibWire implements BaseWire {
       wasmModule
           .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
               ptr);
-
-  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          int ptr) =>
-      wasmModule
-          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-              ptr);
-
-  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          int ptr) =>
-      wasmModule
-          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-              ptr);
 }
 
 @JS('wasm_bindgen')
@@ -333,13 +263,5 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
 
   external void
       rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-          int ptr);
-
-  external void
-      rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          int ptr);
-
-  external void
-      rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
           int ptr);
 }
