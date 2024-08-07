@@ -15,6 +15,7 @@ class Settings extends StatefulWidget {
 
 class _CreateSettingsState extends State<Settings> {
   String _name = "";
+  String _name_setting_element = "Port Name";
   int _speed = 9600;
   TextEditingController _speed_controller = TextEditingController(text: "9600");
   DataBits _dataBits = DataBits.eight;
@@ -27,19 +28,19 @@ class _CreateSettingsState extends State<Settings> {
     List<DropdownMenuItem<String>> items9 = serialPortInfo.map((v) {
       return DropdownMenuItem<String>(value: v.name, child: Text(v.name));
     }).toList();
+
     try {
-      _name = serialPortInfo[0].name;
-    } on IndexError catch (e) {
-      print("No valid ports, Need to handle this, $e");
-      rethrow;
+        _name = serialPortInfo[0].name;
     } on RangeError catch (e) {
-      print("No valid ports, Need to handle this, $e");
-      rethrow;
+        print("No valid ports available."); // debug log here instead
+        _name = "N/A";
+        _name_setting_element = "No Ports";
     }
+
     var name = DropdownButton(
         value: _name,
         items: items9,
-        hint: Text('Port Name'),
+        hint: Text(_name_setting_element),
         onChanged: (name) {
           setState(() {
             print("_name set to $name");
