@@ -80,6 +80,22 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     ));
   }
 
+  Widget connect_disconnect_binary() {
+    var connected = true;
+    if (connected) {
+      return Padding(
+        padding: const EdgeInsets.all(5),
+        child:
+            IconButton.filled(onPressed: () => {}, icon: Icon(Icons.power_off)),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.all(5),
+        child: IconButton.filled(onPressed: () => {}, icon: Icon(Icons.power)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const Color textFieldColor =
@@ -98,24 +114,29 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
         children: [
           create_output(),
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              focusNode: myFocus,
-              controller: _controller,
-              onSubmitted: (value) {
-                onSubmitted(value);
-                myFocus.requestFocus();
-              },
-              style: const TextStyle(color: textFieldTextColor),
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: textFieldColor,
-                border: OutlineInputBorder(),
-                labelText: 'type..',
-                labelStyle: TextStyle(color: textFieldTextColor),
-              ),
-            ),
-          ),
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: TextField(
+                    focusNode: myFocus,
+                    controller: _controller,
+                    onSubmitted: (value) {
+                      onSubmitted(value);
+                      myFocus.requestFocus();
+                    },
+                    style: const TextStyle(color: textFieldTextColor),
+                    decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: textFieldColor,
+                      border: OutlineInputBorder(),
+                      labelText: 'type..',
+                      labelStyle: TextStyle(color: textFieldTextColor),
+                    ),
+                  )),
+                  connect_disconnect_binary()
+                ],
+              ))
         ],
       ),
     );

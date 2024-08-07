@@ -39,6 +39,8 @@ class _CreateTerminalState extends State<Terminal>
     super.dispose();
   }
 
+  void connect() {}
+
   void Function(String) streamHandler() {
     // We update the data regardless which tab we're in to ensure continuity.
     return (String data) {
@@ -54,6 +56,7 @@ class _CreateTerminalState extends State<Terminal>
       children: [
         TabBar(
           controller: _tabController,
+          isScrollable: true,
           tabs: [Text("IO"), Text("Settings")],
         ),
         Expanded(
