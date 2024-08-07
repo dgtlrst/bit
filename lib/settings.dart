@@ -30,11 +30,11 @@ class _CreateSettingsState extends State<Settings> {
     }).toList();
 
     try {
-        _name = serialPortInfo[0].name;
+      _name = serialPortInfo[0].name;
     } on RangeError catch (e) {
-        print("No valid ports available."); // debug log here instead
-        _name = "N/A";
-        _name_setting_element = "No Ports";
+      print("No valid ports available."); // debug log here instead
+      _name = "N/A";
+      _name_setting_element = "No Ports";
     }
 
     var name = DropdownButton(

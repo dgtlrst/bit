@@ -1,2 +1,3 @@
-pub mod simple;
+pub mod controller;
 pub mod serial;
+pub mod simple;

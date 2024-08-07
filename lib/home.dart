@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/src/rust/frb_generated.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +20,16 @@ class _CreateHomePageState extends State<HomePage> {
   late Stream<String?> stream;
   late StreamSubscription<String?> listener;
   final List<String> _data = [];
+  final Controller controller = Controller();
+  late int thread_id;
 
   @override
   void initState() {
     super.initState();
+    stream = controller.createStream();
+    thread_id = controller.getLatestThreadCreated();
     //stream = create_stream();
-    stream = _rust.createStream();
+    //stream = _rust.createStream();
     listener = stream.listen(streamHandler());
   }
 
@@ -50,7 +55,7 @@ class _CreateHomePageState extends State<HomePage> {
   Null Function(dynamic) onSubmitted() {
     return (value) {
       print("Sending to Rust: '${_controller.text}'");
-      _rust.push(s: value);
+      controller.push(threadId: thread_id, data: value);
       _controller.clear();
     };
   }
