@@ -57,7 +57,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => 311262497;
+  int get rustContentHash => 1369680863;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -71,13 +71,13 @@ abstract class RustLibApi extends BaseApi {
   Stream<String> crateApiControllerControllerCreateStream(
       {required Controller that});
 
-  int crateApiControllerControllerGetLatestThreadCreated(
-      {required Controller that});
-
   Controller crateApiControllerControllerNew();
 
   void crateApiControllerControllerPush(
       {required Controller that, required int threadId, required String data});
+
+  void crateApiControllerControllerSetNewThreadId(
+      {required Controller that, required int threadId});
 
   DataBits crateApiSerialDataBitsFrom({required DataBits dataBits});
 
@@ -144,38 +144,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  int crateApiControllerControllerGetLatestThreadCreated(
-      {required Controller that}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-            that, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_u_32,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiControllerControllerGetLatestThreadCreatedConstMeta,
-      argValues: [that],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta
-      get kCrateApiControllerControllerGetLatestThreadCreatedConstMeta =>
-          const TaskConstMeta(
-            debugName: "Controller_get_latest_thread_created",
-            argNames: ["that"],
-          );
-
-  @override
   Controller crateApiControllerControllerNew() {
     return handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -204,7 +177,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that, serializer);
         sse_encode_u_32(threadId, serializer);
         sse_encode_String(data, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -220,6 +193,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "Controller_push",
         argNames: ["that", "threadId", "data"],
+      );
+
+  @override
+  void crateApiControllerControllerSetNewThreadId(
+      {required Controller that, required int threadId}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+            that, serializer);
+        sse_encode_u_32(threadId, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiControllerControllerSetNewThreadIdConstMeta,
+      argValues: [that, threadId],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiControllerControllerSetNewThreadIdConstMeta =>
+      const TaskConstMeta(
+        debugName: "Controller_set_new_thread_id",
+        argNames: ["that", "threadId"],
       );
 
   @override
@@ -855,12 +855,11 @@ class ControllerImpl extends RustOpaque implements Controller {
         that: this,
       );
 
-  int getLatestThreadCreated() =>
-      RustLib.instance.api.crateApiControllerControllerGetLatestThreadCreated(
-        that: this,
-      );
-
   void push({required int threadId, required String data}) =>
       RustLib.instance.api.crateApiControllerControllerPush(
           that: this, threadId: threadId, data: data);
+
+  void setNewThreadId({required int threadId}) =>
+      RustLib.instance.api.crateApiControllerControllerSetNewThreadId(
+          that: this, threadId: threadId);
 }

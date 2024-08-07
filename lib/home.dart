@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/src/rust/frb_generated.dart';
+import 'package:bit/terminal.dart';
 import 'package:flutter/material.dart';
-
 import 'sidepanel.dart'; // side panel
 
 class HomePage extends StatefulWidget {
@@ -14,46 +15,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _CreateHomePageState extends State<HomePage> {
-  final TextEditingController _controller = TextEditingController();
-  late Stream<String?> stream;
-  late StreamSubscription<String?> listener;
-  final List<String> _data = [];
   final Controller controller = Controller();
-  late int thread_id;
 
-  @override
-  void initState() {
-    super.initState();
-    stream = controller.createStream();
-    thread_id = controller.getLatestThreadCreated();
-    listener = stream.listen(streamHandler());
-  }
+  Widget createTerminalGrid() {
+    int num_of_terminals =
+        4; // TODO: Make this configurable with global settings page at some point
+    List<Terminal> terminals = [];
+    for (var i = 0; i < num_of_terminals; i++) {
+      terminals.add(Terminal(
+        controller: controller,
+        threadId: i,
+      ));
+    }
 
-  void Function(String?)? streamHandler() {
-    return (String? data) {
-      if (data != null) {
-        setState(() {
-          _data.add(data);
-        });
-        print("Length of _data: ${_data.length}");
-        print("Receiving Data in Stream: $data");
-      }
-    };
-  }
-
-  Null Function(dynamic) onSubmitted() {
-    return (value) {
-      print("Sending to Rust: '${_controller.text}'");
-      controller.push(threadId: thread_id, data: value);
-      _controller.clear();
-    };
-  }
-
-  Widget create_output() {
-    List<Widget> widgets = _data.map((e) {
-      return Text(e);
-    }).toList();
-    return Expanded(child: Column(children: widgets));
+    var grid = GridView.count(
+      padding: const EdgeInsets.all(20),
+      childAspectRatio: 5 / 2,
+      mainAxisSpacing: 10, // Adjust vertical spacing
+      crossAxisSpacing: 20, // Adjust horizontal spacing
+      crossAxisCount: 2,
+      children: terminals,
+    );
+    return Expanded(child: grid);
   }
 
   @override
@@ -70,28 +53,7 @@ class _CreateHomePageState extends State<HomePage> {
         children: [
           const SidePanel(SidePanelPage.home), // main content
 
-          Expanded(
-            child: Column(
-              children: [
-                create_output(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextField(
-                    controller: _controller,
-                    onSubmitted: onSubmitted(),
-                    style: const TextStyle(color: textFieldTextColor),
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: textFieldColor,
-                      border: OutlineInputBorder(),
-                      labelText: 'type..',
-                      labelStyle: TextStyle(color: textFieldTextColor),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          createTerminalGrid()
         ],
       ),
     );

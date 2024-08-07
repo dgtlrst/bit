@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `get_new_thread_id`, `main`, `new`
+// These functions are ignored because they are not marked as `pub`: `main`, `new`
 // These types are ignored because they are not used by any `pub` functions: `ThreadController`
 // These functions have error during generation (see debug logs or enable `stop_on_error: true` for more details): `end_stream`
 
@@ -14,10 +14,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 abstract class Controller implements RustOpaqueInterface {
   Stream<String> createStream();
 
-  int getLatestThreadCreated();
-
   factory Controller() =>
       RustLib.instance.api.crateApiControllerControllerNew();
 
   void push({required int threadId, required String data});
+
+  void setNewThreadId({required int threadId});
 }
