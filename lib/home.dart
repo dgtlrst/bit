@@ -28,11 +28,14 @@ class _CreateHomePageState extends State<HomePage> {
       ));
     }
 
+    // TODO: GridViews are scrollable which we don't really want
+    // We'll just have to manually make a row/column set for 1x1, 2x1, 1x2, 2x2
+    // and handle it that way.
     var grid = GridView.count(
-      padding: const EdgeInsets.all(20),
-      childAspectRatio: 5 / 2,
+      padding: const EdgeInsets.all(10),
+      childAspectRatio: 16 / 9,
       mainAxisSpacing: 10, // Adjust vertical spacing
-      crossAxisSpacing: 20, // Adjust horizontal spacing
+      crossAxisSpacing: 10, // Adjust horizontal spacing
       crossAxisCount: 2,
       children: terminals,
     );
@@ -52,7 +55,6 @@ class _CreateHomePageState extends State<HomePage> {
       body: Row(
         children: [
           const SidePanel(SidePanelPage.home), // main content
-
           createTerminalGrid()
         ],
       ),

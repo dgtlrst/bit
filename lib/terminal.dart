@@ -21,14 +21,14 @@ class _CreateTerminalState extends State<Terminal> {
   late StreamSubscription<String?> listener;
   final List<String> _data = [];
   final Controller controller = Controller();
-  late int thread_id = widget.threadId;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    controller.setNewThreadId(threadId: thread_id);
+    controller.setNewThreadId(threadId: widget.threadId);
     stream = controller.createStream();
-    print("Thread Id in Dart: $thread_id");
+    print("Thread Id in Dart: ${widget.threadId}");
     listener = stream.listen(streamHandler());
   }
 
@@ -38,6 +38,7 @@ class _CreateTerminalState extends State<Terminal> {
         if (data != null) {
           setState(() {
             _data.add(data);
+            _scrollController.jumpTo(0.0);
           });
           print("Length of _data: ${_data.length}");
           print("Receiving Data in Stream: $data");
@@ -49,7 +50,7 @@ class _CreateTerminalState extends State<Terminal> {
   Null Function(dynamic) onSubmitted() {
     return (value) {
       print("Sending to Rust: '${_controller.text}'");
-      controller.push(threadId: thread_id, data: value);
+      controller.push(threadId: widget.threadId, data: value);
       _controller.clear();
     };
   }
@@ -58,7 +59,12 @@ class _CreateTerminalState extends State<Terminal> {
     List<Widget> widgets = _data.map((e) {
       return Text(e);
     }).toList();
-    return Expanded(child: Column(children: widgets));
+    return Expanded(
+        child: ListView(
+      reverse: true,
+      controller: _scrollController,
+      children: widgets.reversed.toList(),
+    ));
   }
 
   @override
@@ -69,7 +75,14 @@ class _CreateTerminalState extends State<Terminal> {
         Color.fromARGB(255, 96, 135, 142); // TextField text color
     const Color mainTextColor =
         Color.fromARGB(255, 111, 159, 169); // Main content text color
-    return Expanded(
+    // TODO: Handle margins and padding in home so that we can change layout based
+    // On number of terminal connections.
+    return Container(
+      margin: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(3.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blueGrey),
+      ),
       child: Column(
         children: [
           create_output(),

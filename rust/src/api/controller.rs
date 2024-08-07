@@ -40,7 +40,7 @@ impl ThreadController {
                 },
             }
             self.stream
-                .add(format!("Thread {:?}: Tick", self.thread_id));
+                .add(format!("Thread: {:?}: Tick", self.thread_id));
             std::thread::sleep(Duration::from_millis(1000))
         }
     }
