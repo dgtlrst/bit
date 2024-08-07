@@ -3,8 +3,8 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'api/controller.dart';
 import 'api/serial.dart';
-import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -47,9 +47,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
       RustLibWire.fromExternalLibrary;
 
   @override
-  Future<void> executeRustInitializers() async {
-    await api.crateApiSimpleInitApp();
-  }
+  Future<void> executeRustInitializers() async {}
 
   @override
   ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
@@ -59,7 +57,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => 1698291868;
+  int get rustContentHash => 311262497;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -70,13 +68,16 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Stream<String> crateApiSerialEchoCreateStream({required Echo that});
+  Stream<String> crateApiControllerControllerCreateStream(
+      {required Controller that});
 
-  Echo crateApiSerialEchoNew();
+  int crateApiControllerControllerGetLatestThreadCreated(
+      {required Controller that});
 
-  Future<String?> crateApiSerialEchoPop({required Echo that});
+  Controller crateApiControllerControllerNew();
 
-  void crateApiSerialEchoPush({required Echo that, required String s});
+  void crateApiControllerControllerPush(
+      {required Controller that, required int threadId, required String data});
 
   DataBits crateApiSerialDataBitsFrom({required DataBits dataBits});
 
@@ -96,17 +97,13 @@ abstract class RustLibApi extends BaseApi {
 
   StopBits crateApiSerialStopBitsFrom({required StopBits stopBits});
 
-  String crateApiSimpleGreet({required String name});
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_Controller;
 
-  String crateApiSimpleHello({required String a});
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_Controller;
 
-  Future<void> crateApiSimpleInitApp();
-
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Echo;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Echo;
-
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_EchoPtr;
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ControllerPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -118,105 +115,111 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Stream<String> crateApiSerialEchoCreateStream({required Echo that}) {
+  Stream<String> crateApiControllerControllerCreateStream(
+      {required Controller that}) {
     final streamSink = RustStreamSink<String>();
-    unawaited(handler.executeNormal(NormalTask(
-      callFfi: (port_) {
+    handler.executeSync(SyncTask(
+      callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
             that, serializer);
         sse_encode_StreamSink_String_Sse(streamSink, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 1, port: port_);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
         decodeErrorData: null,
       ),
-      constMeta: kCrateApiSerialEchoCreateStreamConstMeta,
+      constMeta: kCrateApiControllerControllerCreateStreamConstMeta,
       argValues: [that, streamSink],
       apiImpl: this,
-    )));
+    ));
     return streamSink.stream;
   }
 
-  TaskConstMeta get kCrateApiSerialEchoCreateStreamConstMeta =>
+  TaskConstMeta get kCrateApiControllerControllerCreateStreamConstMeta =>
       const TaskConstMeta(
-        debugName: "Echo_create_stream",
+        debugName: "Controller_create_stream",
         argNames: ["that", "streamSink"],
       );
 
   @override
-  Echo crateApiSerialEchoNew() {
+  int crateApiControllerControllerGetLatestThreadCreated(
+      {required Controller that}) {
     return handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+            that, serializer);
         return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
       },
       codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho,
+        decodeSuccessData: sse_decode_u_32,
         decodeErrorData: null,
       ),
-      constMeta: kCrateApiSerialEchoNewConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSerialEchoNewConstMeta => const TaskConstMeta(
-        debugName: "Echo_new",
-        argNames: [],
-      );
-
-  @override
-  Future<String?> crateApiSerialEchoPop({required Echo that}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-            that, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_opt_String,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiSerialEchoPopConstMeta,
+      constMeta: kCrateApiControllerControllerGetLatestThreadCreatedConstMeta,
       argValues: [that],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateApiSerialEchoPopConstMeta => const TaskConstMeta(
-        debugName: "Echo_pop",
-        argNames: ["that"],
-      );
+  TaskConstMeta
+      get kCrateApiControllerControllerGetLatestThreadCreatedConstMeta =>
+          const TaskConstMeta(
+            debugName: "Controller_get_latest_thread_created",
+            argNames: ["that"],
+          );
 
   @override
-  void crateApiSerialEchoPush({required Echo that, required String s}) {
+  Controller crateApiControllerControllerNew() {
     return handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiControllerControllerNewConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiControllerControllerNewConstMeta =>
+      const TaskConstMeta(
+        debugName: "Controller_new",
+        argNames: [],
+      );
+
+  @override
+  void crateApiControllerControllerPush(
+      {required Controller that, required int threadId, required String data}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
             that, serializer);
-        sse_encode_String(s, serializer);
+        sse_encode_u_32(threadId, serializer);
+        sse_encode_String(data, serializer);
         return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
         decodeErrorData: sse_decode_AnyhowException,
       ),
-      constMeta: kCrateApiSerialEchoPushConstMeta,
-      argValues: [that, s],
+      constMeta: kCrateApiControllerControllerPushConstMeta,
+      argValues: [that, threadId, data],
       apiImpl: this,
     ));
   }
 
-  TaskConstMeta get kCrateApiSerialEchoPushConstMeta => const TaskConstMeta(
-        debugName: "Echo_push",
-        argNames: ["that", "s"],
+  TaskConstMeta get kCrateApiControllerControllerPushConstMeta =>
+      const TaskConstMeta(
+        debugName: "Controller_push",
+        argNames: ["that", "threadId", "data"],
       );
 
   @override
@@ -378,80 +381,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         argNames: ["stopBits"],
       );
 
-  @override
-  String crateApiSimpleGreet({required String name}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(name, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiSimpleGreetConstMeta,
-      argValues: [name],
-      apiImpl: this,
-    ));
-  }
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_Controller => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController;
 
-  TaskConstMeta get kCrateApiSimpleGreetConstMeta => const TaskConstMeta(
-        debugName: "greet",
-        argNames: ["name"],
-      );
-
-  @override
-  String crateApiSimpleHello({required String a}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(a, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiSimpleHelloConstMeta,
-      argValues: [a],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleHelloConstMeta => const TaskConstMeta(
-        debugName: "hello",
-        argNames: ["a"],
-      );
-
-  @override
-  Future<void> crateApiSimpleInitApp() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 13, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiSimpleInitAppConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiSimpleInitAppConstMeta => const TaskConstMeta(
-        debugName: "init_app",
-        argNames: [],
-      );
-
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Echo =>
-      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Echo =>
-      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho;
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_Controller => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
@@ -460,27 +396,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Echo
-      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+  Controller
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return EchoImpl.frbInternalDcoDecode(raw as List<dynamic>);
+    return ControllerImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
-  Echo
-      dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+  Controller
+      dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return EchoImpl.frbInternalDcoDecode(raw as List<dynamic>);
+    return ControllerImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
-  Echo
-      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+  Controller
+      dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return EchoImpl.frbInternalDcoDecode(raw as List<dynamic>);
+    return ControllerImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  Controller
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ControllerImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -523,12 +467,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<SerialPortInfo> dco_decode_list_serial_port_info(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_serial_port_info).toList();
-  }
-
-  @protected
-  String? dco_decode_opt_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_String(raw);
   }
 
   @protected
@@ -591,29 +529,38 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Echo
-      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+  Controller
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return EchoImpl.frbInternalSseDecode(
+    return ControllerImpl.frbInternalSseDecode(
         sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
   @protected
-  Echo
-      sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+  Controller
+      sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return EchoImpl.frbInternalSseDecode(
+    return ControllerImpl.frbInternalSseDecode(
         sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
   @protected
-  Echo
-      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
+  Controller
+      sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
           SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return EchoImpl.frbInternalSseDecode(
+    return ControllerImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  Controller
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ControllerImpl.frbInternalSseDecode(
         sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
@@ -669,17 +616,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ans_.add(sse_decode_serial_port_info(deserializer));
     }
     return ans_;
-  }
-
-  @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_String(deserializer));
-    } else {
-      return null;
-    }
   }
 
   @protected
@@ -752,29 +688,38 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          Echo self, SseSerializer serializer) {
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+          Controller self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
-        (self as EchoImpl).frbInternalSseEncode(move: true), serializer);
+        (self as ControllerImpl).frbInternalSseEncode(move: true), serializer);
   }
 
   @protected
   void
-      sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          Echo self, SseSerializer serializer) {
+      sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+          Controller self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
-        (self as EchoImpl).frbInternalSseEncode(move: false), serializer);
+        (self as ControllerImpl).frbInternalSseEncode(move: false), serializer);
   }
 
   @protected
   void
-      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEcho(
-          Echo self, SseSerializer serializer) {
+      sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+          Controller self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
-        (self as EchoImpl).frbInternalSseEncode(move: null), serializer);
+        (self as ControllerImpl).frbInternalSseEncode(move: false), serializer);
+  }
+
+  @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
+          Controller self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as ControllerImpl).frbInternalSseEncode(move: null), serializer);
   }
 
   @protected
@@ -833,16 +778,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_String(self, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_parity(Parity self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.index, serializer);
@@ -897,33 +832,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 }
 
 @sealed
-class EchoImpl extends RustOpaque implements Echo {
+class ControllerImpl extends RustOpaque implements Controller {
   // Not to be used by end users
-  EchoImpl.frbInternalDcoDecode(List<dynamic> wire)
+  ControllerImpl.frbInternalDcoDecode(List<dynamic> wire)
       : super.frbInternalDcoDecode(wire, _kStaticData);
 
   // Not to be used by end users
-  EchoImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+  ControllerImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
       : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
 
   static final _kStaticData = RustArcStaticData(
     rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_Echo,
+        RustLib.instance.api.rust_arc_increment_strong_count_Controller,
     rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_Echo,
+        RustLib.instance.api.rust_arc_decrement_strong_count_Controller,
     rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_EchoPtr,
+        RustLib.instance.api.rust_arc_decrement_strong_count_ControllerPtr,
   );
 
   Stream<String> createStream() =>
-      RustLib.instance.api.crateApiSerialEchoCreateStream(
+      RustLib.instance.api.crateApiControllerControllerCreateStream(
         that: this,
       );
 
-  Future<String?> pop() => RustLib.instance.api.crateApiSerialEchoPop(
+  int getLatestThreadCreated() =>
+      RustLib.instance.api.crateApiControllerControllerGetLatestThreadCreated(
         that: this,
       );
 
-  void push({required String s}) =>
-      RustLib.instance.api.crateApiSerialEchoPush(that: this, s: s);
+  void push({required int threadId, required String data}) =>
+      RustLib.instance.api.crateApiControllerControllerPush(
+          that: this, threadId: threadId, data: data);
 }
