@@ -13,10 +13,8 @@ class TerminalIOTab extends StatefulWidget {
   final int threadId;
   final List<String> dataStore;
   final Stream<String> stream;
-  final StreamSubscription<String> dataStoreUpdater;
   const TerminalIOTab(
       {super.key,
-      required this.dataStoreUpdater,
       required this.stream,
       required this.controller,
       required this.threadId,
@@ -41,13 +39,13 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     controller = widget.controller;
     stream = widget.stream;
     print("Thread Id in Dart: ${widget.threadId}");
-    listener = stream.listen(streamHandler());
-    widget.dataStoreUpdater.resume();
+    listener = stream.listen(
+        streamHandler()); // This listener is to update scroll position and force rerender
+    // The one passed in only updates the datastore but we need to resume and pause it
   }
 
   @override
   void dispose() {
-    widget.dataStoreUpdater.pause();
     listener.cancel();
     super.dispose();
   }
@@ -64,12 +62,10 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     };
   }
 
-  Null Function(dynamic) onSubmitted() {
-    return (value) {
-      print("Sending to Rust: '${_controller.text}'");
-      controller.push(threadId: widget.threadId, data: value);
-      _controller.clear();
-    };
+  void onSubmitted(String value) {
+    print("Sending to Rust: '${_controller.text}'");
+    controller.push(threadId: widget.threadId, data: value);
+    _controller.clear();
   }
 
   Widget create_output() {
@@ -92,6 +88,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
         Color.fromARGB(255, 96, 135, 142); // TextField text color
     const Color mainTextColor =
         Color.fromARGB(255, 111, 159, 169); // Main content text color
+    FocusNode myFocus = FocusNode();
     return Container(
       margin: const EdgeInsets.all(15.0),
       padding: const EdgeInsets.all(3.0),
@@ -104,8 +101,12 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+              focusNode: myFocus,
               controller: _controller,
-              onSubmitted: onSubmitted(),
+              onSubmitted: (value) {
+                onSubmitted(value);
+                myFocus.requestFocus();
+              },
               style: const TextStyle(color: textFieldTextColor),
               decoration: const InputDecoration(
                 filled: true,

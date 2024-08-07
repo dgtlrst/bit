@@ -31,7 +31,6 @@ class _CreateTerminalState extends State<Terminal>
     widget.controller.setNewThreadId(threadId: widget.threadId);
     stream = widget.controller.createStream().asBroadcastStream();
     listener = stream.listen(streamHandler());
-    listener.pause();
   }
 
   @override
@@ -41,6 +40,7 @@ class _CreateTerminalState extends State<Terminal>
   }
 
   void Function(String) streamHandler() {
+    // We update the data regardless which tab we're in to ensure continuity.
     return (String data) {
       if (mounted) {
         dataStore.add(data);
@@ -59,7 +59,6 @@ class _CreateTerminalState extends State<Terminal>
         Expanded(
             child: TabBarView(controller: _tabController, children: [
           TerminalIOTab(
-            dataStoreUpdater: listener,
             stream: stream,
             controller: widget.controller,
             threadId: widget.threadId,
