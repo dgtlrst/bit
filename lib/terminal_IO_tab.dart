@@ -31,7 +31,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
   late List<String> _data;
   late Controller controller;
   final ScrollController _scrollController = ScrollController();
-
+  final FocusNode myFocus = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -88,7 +88,6 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
         Color.fromARGB(255, 96, 135, 142); // TextField text color
     const Color mainTextColor =
         Color.fromARGB(255, 111, 159, 169); // Main content text color
-    FocusNode myFocus = FocusNode();
     return Container(
       margin: const EdgeInsets.all(15.0),
       padding: const EdgeInsets.all(3.0),
