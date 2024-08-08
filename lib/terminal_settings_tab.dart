@@ -20,13 +20,8 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _CreateSettingsTabState extends State<SettingsTab> {
-  String _name = "";
   String _name_setting_element = "Port Name";
-  int _speed = 9600;
   TextEditingController _speed_controller = TextEditingController(text: "9600");
-  Parity _parity = Parity.none;
-  StopBits _stopBit = StopBits.one;
-  FlowControl _flowControl = FlowControl.none;
   late TerminalState terminalState;
 
   @override
@@ -41,6 +36,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       return DropdownMenuItem<String>(value: v.name, child: Text(v.name));
     }).toList();
 
+    String _name = terminalState.settings.name;
     try {
       _name = serialPortInfo[0].name;
     } on RangeError catch (e) {
@@ -64,6 +60,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Name"), name],
     );
 
+    int _speed = terminalState.settings.speed;
     TextField speed;
     try {
       int.parse(_speed_controller.text);
@@ -132,6 +129,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Databit"), dataBits],
     );
 
+    StopBits _stopBit = terminalState.settings.stopBits;
     List<DropdownMenuItem<StopBits>> items11 = StopBits.values.map((v) {
       return DropdownMenuItem<StopBits>(value: v, child: Text(v.name));
     }).toList();
@@ -151,6 +149,8 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Stopbit"), stopBit],
     );
 
+    Parity _parity = terminalState.settings.parity;
+
     List<DropdownMenuItem<Parity>> items2 = Parity.values.map((v) {
       return DropdownMenuItem<Parity>(value: v, child: Text(v.name));
     }).toList();
@@ -168,7 +168,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
     var par_group = Column(
       children: [Text("Parity"), parity],
     );
-
+    FlowControl _flowControl = terminalState.settings.flowControl;
     List<DropdownMenuItem<FlowControl>> items3 = FlowControl.values.map((v) {
       return DropdownMenuItem<FlowControl>(value: v, child: Text(v.name));
     }).toList();
