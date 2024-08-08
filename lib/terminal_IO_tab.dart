@@ -24,19 +24,18 @@ class TerminalIOTab extends StatefulWidget {
 class _CreateTerminalIOTabState extends State<TerminalIOTab>
     with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
-  late Stream<String> stream;
   late StreamSubscription<String> listener;
   late List<String> _data;
   final ScrollController _scrollController = ScrollController();
   final FocusNode myFocus = FocusNode();
   late TerminalState terminalState;
-  double lastOffset = 0.0;
+
   @override
   void initState() {
     super.initState();
     terminalState = widget.state.getTerminalState(widget.threadId)!;
     _data = terminalState.getTerminalData();
-    stream = terminalState.getTerminalStream();
+    Stream<String> stream = terminalState.getTerminalStream();
     print("Thread Id in Dart: ${widget.threadId}");
     listener = stream.listen(
         streamHandler()); // This listener is to update scroll position and force rerender
@@ -52,6 +51,11 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
   void Function(String) streamHandler() {
     return (String data) {
       if (mounted) {
+        // When this widget is mounted aka is being shown
+        // We use setState to simply rerender every time an event is emitted
+        // The data continues to get stored in widget.state regardless of
+        // whether the widget is getting rendered without setState to
+        // decouple data gathering from rendering.
         setState(() {});
         print("Length of _data: ${_data.length}");
         print("Receiving Data in Stream: $data");
