@@ -7,9 +7,52 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `main`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`
 
 List<SerialPortInfo> listAvailablePorts() =>
     RustLib.instance.api.crateApiSerialListAvailablePorts();
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SerialPortInfo>>
+abstract class SerialPortInfo implements RustOpaqueInterface {
+  DataBits get dataBits;
+
+  FlowControl get flowControl;
+
+  String get name;
+
+  Parity get parity;
+
+  int get speed;
+
+  StopBits get stopBits;
+
+  set dataBits(DataBits dataBits);
+
+  set flowControl(FlowControl flowControl);
+
+  set name(String name);
+
+  set parity(Parity parity);
+
+  set speed(int speed);
+
+  set stopBits(StopBits stopBits);
+
+  factory SerialPortInfo(
+          {required String name,
+          required int speed,
+          required DataBits dataBits,
+          required Parity parity,
+          required StopBits stopBits,
+          required FlowControl flowControl}) =>
+      RustLib.instance.api.crateApiSerialSerialPortInfoNew(
+          name: name,
+          speed: speed,
+          dataBits: dataBits,
+          parity: parity,
+          stopBits: stopBits,
+          flowControl: flowControl);
+}
 
 enum DataBits {
   five,
@@ -41,60 +84,6 @@ enum Parity {
 
   static Parity from({required Parity parity}) =>
       RustLib.instance.api.crateApiSerialParityFrom(parity: parity);
-}
-
-class SerialPortInfo {
-  final String name;
-  final int speed;
-  final DataBits dataBits;
-  final Parity parity;
-  final StopBits stopBits;
-  final FlowControl flowControl;
-
-  const SerialPortInfo.raw({
-    required this.name,
-    required this.speed,
-    required this.dataBits,
-    required this.parity,
-    required this.stopBits,
-    required this.flowControl,
-  });
-
-  factory SerialPortInfo(
-          {required String name,
-          required int speed,
-          required DataBits dataBits,
-          required Parity parity,
-          required StopBits stopBits,
-          required FlowControl flowControl}) =>
-      RustLib.instance.api.crateApiSerialSerialPortInfoNew(
-          name: name,
-          speed: speed,
-          dataBits: dataBits,
-          parity: parity,
-          stopBits: stopBits,
-          flowControl: flowControl);
-
-  @override
-  int get hashCode =>
-      name.hashCode ^
-      speed.hashCode ^
-      dataBits.hashCode ^
-      parity.hashCode ^
-      stopBits.hashCode ^
-      flowControl.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SerialPortInfo &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          speed == other.speed &&
-          dataBits == other.dataBits &&
-          parity == other.parity &&
-          stopBits == other.stopBits &&
-          flowControl == other.flowControl;
 }
 
 enum StopBits {

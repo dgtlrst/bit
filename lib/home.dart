@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/src/rust/frb_generated.dart';
+import 'package:bit/state.dart';
 import 'package:bit/terminal.dart';
 import 'package:flutter/material.dart';
 import 'sidepanel.dart'; // side panel
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final AppState state;
+  const HomePage({super.key, required this.state});
   @override
   State<HomePage> createState() => _CreateHomePageState();
 }
@@ -54,7 +56,7 @@ class _CreateHomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text('terminal')),
       body: Row(
         children: [
-          const SidePanel(SidePanelPage.home), // main content
+          SidePanel(SidePanelPage.home, widget.state), // main content
           createTerminalGrid()
         ],
       ),

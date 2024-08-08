@@ -60,7 +60,7 @@ impl ThreadController {
                 }
             }
 
-            std::thread::sleep(Duration::from_millis(10))
+            std::thread::sleep(Duration::from_millis(1))
         }
     }
 }
@@ -96,20 +96,25 @@ impl Controller {
     }
 
     #[flutter_rust_bridge::frb(sync)]
-    pub fn end_stream(mut self, thread_id: u32) {
+    pub fn end_stream(&mut self, thread_id: u32) {
         let channel = &self.thread_transmitters[&thread_id];
         drop(channel); // Drop channel, Should end the thread.
-        let remove_channel_from_map = &self.thread_transmitters.remove(&thread_id);
+        let _remove_channel_from_map = &self.thread_transmitters.remove(&thread_id);
         let thread_handle = self.thread_handles.remove(&thread_id);
         match thread_handle {
-            Some(handle) => {
-                handle.join();
-            }
+            Some(handle) => match handle.join() {
+                std::result::Result::Ok(_) => {
+                    println!("Thread successfully joined!");
+                }
+                Err(_) => {
+                    println!("Thread failed to join!");
+                }
+            },
             None => {
-                println!("Controller: end_stream -> Handle does not exist. This is a logical Error. Ignoring for stability.")
+                println!("Controller: end_stream -> Handle does not exist. This is a logical Error. Ignoring for stability.");
             }
-        }
-        let remove_thread_handle_from_map = &self.thread_handles.remove(&thread_id);
+        };
+        let _remove_thread_handle_from_map = &self.thread_handles.remove(&thread_id);
         // Remove transmitter
     }
 

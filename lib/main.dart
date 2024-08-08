@@ -1,4 +1,5 @@
 import 'package:bit/src/rust/api/serial.dart';
+import 'package:bit/state.dart';
 import 'package:flutter/material.dart';
 import 'package:bit/src/rust/frb_generated.dart';
 
@@ -6,11 +7,14 @@ import 'home.dart'; // home
 
 Future<void> main() async {
   await RustLib.init();
-  runApp(const MyApp());
+  // Here we can load data saved to disk, Not sure when we'd write config to disk
+  // Need to investigate how Darts lifecycle stuff works.
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AppState state = AppState();
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +29,6 @@ class MyApp extends StatelessWidget {
           textTheme:
               const TextTheme(bodyLarge: TextStyle(color: mainTextColor)),
         ),
-        home: HomePage());
+        home: HomePage(state: state));
   }
 }

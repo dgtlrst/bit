@@ -1,13 +1,15 @@
 import 'dart:ffi';
 
 import 'package:bit/src/rust/api/serial.dart';
+import 'package:bit/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'sidepanel.dart'; // side panel
 
 class Settings extends StatefulWidget {
-  const Settings({super.key});
+  final AppState state;
+  const Settings({super.key, required this.state});
   @override
   State<Settings> createState() => _CreateSettingsState();
 }
@@ -213,7 +215,7 @@ class _CreateSettingsState extends State<Settings> {
       body: Row(
         children: [
           // main content
-          const SidePanel(SidePanelPage.settings),
+          SidePanel(SidePanelPage.settings, widget.state),
 
           Expanded(
             child: Column(
