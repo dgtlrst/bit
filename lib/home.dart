@@ -25,6 +25,7 @@ class _CreateHomePageState extends State<HomePage> {
     List<Terminal> terminals = [];
     for (var i = 0; i < num_of_terminals; i++) {
       terminals.add(Terminal(
+        threadId: i,
         state: widget.state,
       ));
     }

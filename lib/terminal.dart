@@ -12,7 +12,8 @@ import 'sidepanel.dart'; // side panel
 
 class Terminal extends StatefulWidget {
   final AppState state;
-  const Terminal({super.key, required this.state});
+  final int threadId;
+  const Terminal({super.key, required this.state, required this.threadId});
   @override
   State<Terminal> createState() => _CreateTerminalState();
 }
@@ -21,17 +22,16 @@ class _CreateTerminalState extends State<Terminal>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late TerminalState terminalState;
-  late int threadId;
   @override
   void initState() {
     super.initState();
-    threadId = widget.state.getUnusedThreadOrCreateThread();
-    terminalState = widget.state.getTerminalState(threadId)!;
+    terminalState = widget.state.getThreadAndCreateIfNotExist(widget.threadId);
     _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
+    terminalState.in_use = false;
     _tabController.dispose();
     super.dispose();
   }
@@ -49,11 +49,11 @@ class _CreateTerminalState extends State<Terminal>
             child: TabBarView(controller: _tabController, children: [
           TerminalIOTab(
             state: widget.state,
-            threadId: threadId,
+            threadId: widget.threadId,
           ),
           SettingsTab(
             state: widget.state,
-            threadId: threadId,
+            threadId: widget.threadId,
           )
         ]))
       ],

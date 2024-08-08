@@ -27,16 +27,16 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
   late Stream<String> stream;
   late StreamSubscription<String> listener;
   late List<String> _data;
-  late Controller controller;
   final ScrollController _scrollController = ScrollController();
   final FocusNode myFocus = FocusNode();
+  late TerminalState terminalState;
   double lastOffset = 0.0;
   @override
   void initState() {
     super.initState();
-    _data = widget.dataStore;
-    controller = widget.controller;
-    stream = widget.stream;
+    terminalState = widget.state.getTerminalState(widget.threadId)!;
+    _data = terminalState.getTerminalData();
+    stream = terminalState.getTerminalStream();
     print("Thread Id in Dart: ${widget.threadId}");
     listener = stream.listen(
         streamHandler()); // This listener is to update scroll position and force rerender
@@ -61,7 +61,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
 
   void onSubmitted(String value) {
     print("Sending to Rust: '${_controller.text}'");
-    controller.push(threadId: widget.threadId, data: value);
+    widget.state.pushToTerminal(widget.threadId, value);
     _controller.clear();
   }
 

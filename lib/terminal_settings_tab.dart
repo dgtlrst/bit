@@ -32,7 +32,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   @override
   void initState() {
     super.initState();
-    widget.state.getTerminalState(widget.threadId);
+    terminalState = widget.state.getTerminalState(widget.threadId)!;
   }
 
   GridView settingsGrid() {

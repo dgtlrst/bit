@@ -74,15 +74,18 @@ class AppState {
     return _threads[threadId];
   }
 
-  int getUnusedThreadOrCreateThread() {
+  getThreadAndCreateIfNotExist(int threadId) {
     // Returns threadId
     for (TerminalState thread in _threads.values) {
       if (thread.in_use == false) {
         thread.in_use = true;
-        return thread.threadId;
+        return getTerminalState(thread.threadId);
       }
     }
     // If not yet returned create new thread
-    return newTerminalState();
+    int terminalId = newTerminalState();
+    TerminalState state = getTerminalState(threadId)!;
+    state.in_use = true;
+    return state;
   }
 }
