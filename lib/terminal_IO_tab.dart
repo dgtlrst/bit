@@ -37,9 +37,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     _data = terminalState.getTerminalData();
     Stream<String> stream = terminalState.getTerminalStream();
     print("Thread Id in Dart: ${widget.threadId}");
-    listener = stream.listen(
-        streamHandler()); // This listener is to update scroll position and force rerender
-    // The one passed in only updates the datastore but we need to resume and pause it
+    listener = stream.listen(streamHandler());
   }
 
   @override
