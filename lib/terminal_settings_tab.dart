@@ -1,13 +1,20 @@
 import 'dart:ffi';
 
 import 'package:bit/src/rust/api/serial.dart';
+import 'package:bit/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'sidepanel.dart'; // side panel
 
 class SettingsTab extends StatefulWidget {
-  const SettingsTab({super.key});
+  final int threadId;
+  final AppState state;
+  const SettingsTab({
+    super.key,
+    required this.state,
+    required this.threadId,
+  });
   @override
   State<SettingsTab> createState() => _CreateSettingsTabState();
 }
@@ -17,10 +24,16 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   String _name_setting_element = "Port Name";
   int _speed = 9600;
   TextEditingController _speed_controller = TextEditingController(text: "9600");
-  DataBits _dataBits = DataBits.eight;
   Parity _parity = Parity.none;
   StopBits _stopBit = StopBits.one;
   FlowControl _flowControl = FlowControl.none;
+  late TerminalState terminalState;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.state.getTerminalState(widget.threadId);
+  }
 
   GridView settingsGrid() {
     List<SerialPortInfo> serialPortInfo = listAvailablePorts();
@@ -44,6 +57,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           setState(() {
             print("_name set to $name");
             _name = name!;
+            terminalState.settings.name = name!;
           });
         });
     var name_group = Column(
@@ -79,6 +93,8 @@ class _CreateSettingsTabState extends State<SettingsTab> {
             try {
               setState(() {
                 _speed = int.parse(value);
+                terminalState.settings.speed = _speed;
+
                 print("_speed set to $_speed");
               });
             } on FormatException {
@@ -97,6 +113,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Speed"), speed],
     );
 
+    DataBits _dataBits = terminalState.settings.dataBits;
     List<DropdownMenuItem<DataBits>> items = DataBits.values.map((v) {
       return DropdownMenuItem<DataBits>(value: v, child: Text(v.name));
     }).toList();
@@ -108,6 +125,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           setState(() {
             print("_dataBits set to $dataBit");
             _dataBits = dataBit!;
+            terminalState.settings.dataBits = dataBit!;
           });
         });
     var data_group = Column(
@@ -125,6 +143,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           setState(() {
             print("_stopbit set to $stopbit");
             _stopBit = stopbit!;
+            terminalState.settings.stopBits = stopbit!;
           });
         });
 
@@ -142,6 +161,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         onChanged: (parity) {
           setState(() {
             _parity = parity!;
+            terminalState.settings.parity = parity!;
           });
         });
 
@@ -159,6 +179,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         onChanged: (flowcontrol) {
           setState(() {
             _flowControl = flowcontrol!;
+            terminalState.settings.flowControl = flowcontrol!;
           });
         });
 

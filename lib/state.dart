@@ -19,17 +19,18 @@ class TerminalState {
       parity: Parity.none,
       stopBits: StopBits.one,
       flowControl: FlowControl.none);
-  List<String> _rxData = [];
+  bool in_use = false;
+  final List<String> _rxData = [];
   TerminalState({required this.threadId, required this.stream}) {
     _listener = stream.listen(streamHandler());
   }
 
-  Stream<String>? getTerminalStream() {
+  Stream<String> getTerminalStream() {
     // To allow a widget to set up a subscription
     return stream;
   }
 
-  List<String>? getTerminalData() {
+  List<String> getTerminalData() {
     return _rxData;
   }
 
@@ -37,10 +38,6 @@ class TerminalState {
     return (String data) {
       _rxData.add(data);
     };
-  }
-
-  void setSettingsName(String name) {
-    settings.name = name;
   }
 }
 
@@ -75,5 +72,17 @@ class AppState {
 
   TerminalState? getTerminalState(int threadId) {
     return _threads[threadId];
+  }
+
+  int getUnusedThreadOrCreateThread() {
+    // Returns threadId
+    for (TerminalState thread in _threads.values) {
+      if (thread.in_use == false) {
+        thread.in_use = true;
+        return thread.threadId;
+      }
+    }
+    // If not yet returned create new thread
+    return newTerminalState();
   }
 }

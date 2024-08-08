@@ -3,22 +3,20 @@ import 'dart:async';
 import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/src/rust/frb_generated.dart';
+import 'package:bit/state.dart';
 import 'package:bit/terminal_settings_tab.dart';
 import 'package:flutter/material.dart';
 
 import 'sidepanel.dart'; // side panel
 
 class TerminalIOTab extends StatefulWidget {
-  final Controller controller;
   final int threadId;
-  final List<String> dataStore;
-  final Stream<String> stream;
-  const TerminalIOTab(
-      {super.key,
-      required this.stream,
-      required this.controller,
-      required this.threadId,
-      required this.dataStore});
+  final AppState state;
+  const TerminalIOTab({
+    super.key,
+    required this.state,
+    required this.threadId,
+  });
   @override
   State<TerminalIOTab> createState() => _CreateTerminalIOTabState();
 }

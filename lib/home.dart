@@ -25,8 +25,7 @@ class _CreateHomePageState extends State<HomePage> {
     List<Terminal> terminals = [];
     for (var i = 0; i < num_of_terminals; i++) {
       terminals.add(Terminal(
-        controller: controller,
-        threadId: i,
+        state: widget.state,
       ));
     }
 
@@ -34,6 +33,7 @@ class _CreateHomePageState extends State<HomePage> {
     // We'll just have to manually make a row/column set for 1x1, 2x1, 1x2, 2x2
     // and handle it that way.
     var grid = GridView.count(
+      shrinkWrap: true,
       padding: const EdgeInsets.all(10),
       childAspectRatio: 16 / 9,
       mainAxisSpacing: 10, // Adjust vertical spacing
