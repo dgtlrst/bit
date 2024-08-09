@@ -10,14 +10,14 @@ use serialport::Error;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread::JoinHandle;
 
-struct ThreadController {
+struct TerminalRunner {
     thread_id: u32,
     stream: StreamSink<String>,
     receiver: Receiver<String>,
 }
-impl ThreadController {
+impl TerminalRunner {
     fn new(thread_id: u32, stream: StreamSink<String>, receiver: Receiver<String>) -> Self {
-        ThreadController {
+        TerminalRunner {
             thread_id,
             stream,
             receiver,
@@ -70,6 +70,70 @@ impl ThreadController {
             }
 
             std::thread::sleep(Duration::from_millis(1))
+        }
+    }
+}
+
+#[flutter_rust_bridge::frb(opaque)]
+pub struct TerminalController {
+    thread_id: u32,
+    thread_handle: Option<JoinHandle<()>>,
+    thread_transmitter: Option<Box<Sender<String>>>,
+}
+impl TerminalController {
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn new(thread_id: u32) -> Self {
+        TerminalController {
+            thread_id: thread_id,
+            thread_handle: None,
+            thread_transmitter: None,
+        }
+    }
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn create_stream(&mut self, stream_sink: StreamSink<String>) {
+        // Create stream should always be used in tandem with get_latest_thread_created
+        let thread_closure =
+            move |thread_id: u32, stream_sink: StreamSink<String>, rx: Receiver<String>| {
+                let thread_controller = TerminalRunner::new(thread_id, stream_sink, rx);
+                thread_controller.main();
+            };
+        let (tx, rx) = mpsc::channel();
+        let thread_id = self.thread_id;
+        let handle = thread::spawn(move || thread_closure(thread_id, stream_sink, rx));
+        self.thread_transmitter = Some(Box::new(tx));
+        self.thread_handle = Some(handle);
+    }
+
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn end_stream(&mut self) {
+        self.thread_transmitter = None;
+        let handle = self.thread_handle.take();
+        match handle {
+            Some(handle) => match handle.join() {
+                std::result::Result::Ok(_) => {
+                    println!("Thread successfully joined!");
+                }
+                Err(_) => {
+                    println!("Thread failed to join!");
+                }
+            },
+            None => {
+                println!("Controller: end_stream -> Handle does not exist. This is a logical Error. Ignoring for stability.");
+            }
+        };
+        self.thread_handle = None;
+        // Remove transmitter
+    }
+
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn push(&self, data: String) -> Result<()> {
+        let tx = &self.thread_transmitter;
+        match tx {
+            Some(sender) => match sender.send(data) {
+                std::result::Result::Ok(_) => return Ok(()),
+                Err(_) => return Err(anyhow!("Receiver disconnected!")),
+            },
+            None => Err(anyhow!("Receiver does not exist!")),
         }
     }
 }
@@ -139,7 +203,7 @@ impl Controller {
         // Create stream should always be used in tandem with get_latest_thread_created
         let thread_closure =
             move |thread_id: u32, stream_sink: StreamSink<String>, rx: Receiver<String>| {
-                let thread_controller = ThreadController::new(thread_id, stream_sink, rx);
+                let thread_controller = TerminalRunner::new(thread_id, stream_sink, rx);
                 thread_controller.main();
             };
 
