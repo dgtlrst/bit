@@ -43,7 +43,7 @@ class _CreateHomePageState extends State<HomePage> {
           Terminal(state: widget.state, threadId: 1)
         ];
         childAspectRatio = aspect / 2;
-        heightOffset = 200;
+        // heightOffset = 200;
         crossAxisCount = 2;
       case Layout.twoByOne:
         terminals = [
