@@ -1,6 +1,6 @@
 enum Layout { oneByOne, oneByTwo, twoByOne, twoByTwo }
 
 class GlobalSettings {
-  bool warnings = false;
+  bool warnings = true;
   Layout layout = Layout.twoByTwo;
 }

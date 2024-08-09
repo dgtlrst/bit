@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:bit/State_terminal.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/State_app.dart';
+import 'package:bit/warning_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -29,6 +30,35 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   void initState() {
     super.initState();
     terminalState = widget.state.getTerminalState(widget.threadId)!;
+    _speed_controller.text = terminalState.settings.speed.toString();
+  }
+
+  void warnIfConnected(BuildContext context, void Function() onAccept) {
+    if (widget.state.globalSettings.warnings) {
+      if (terminalState.connected) {
+        return showWarningDialog(
+            state: widget.state,
+            context: context,
+            explanation:
+                "You are still connected, if you accept this will disconnect and reconnect automatically!",
+            onAccept: () {
+              // Disconnect, make change, reconnect
+              terminalState.disconnectIfNotDisconnected();
+              onAccept();
+              terminalState.connectIfNotConnected();
+            },
+            onCancel: () => {
+                  //Ignore change
+                });
+      } else {
+        onAccept();
+      }
+    } else {
+      // If warnings are disabled we do nothing.
+      terminalState.disconnectIfNotDisconnected();
+      onAccept();
+      terminalState.connectIfNotConnected();
+    }
   }
 
   GridView settingsGrid() {
@@ -40,7 +70,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
     String _name = terminalState.settings.name;
     try {
       _name = serialPortInfo[0].name;
-    } on RangeError catch (e) {
+    } on RangeError {
       print("No valid ports available."); // debug log here instead
       _name = "N/A";
       _name_setting_element = "No Ports";
@@ -51,10 +81,11 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         items: items9,
         hint: Text(_name_setting_element),
         onChanged: (name) {
-          setState(() {
-            print("_name set to $name");
-            _name = name!;
-            terminalState.settings.name = name!;
+          warnIfConnected(context, () {
+            setState(() {
+              print("_name set to $name");
+              terminalState.settings.name = name!;
+            });
           });
         });
     var name_group = Column(
@@ -62,49 +93,43 @@ class _CreateSettingsTabState extends State<SettingsTab> {
     );
 
     int _speed = terminalState.settings.speed;
-    TextField speed;
-    try {
-      int.parse(_speed_controller.text);
-      speed = TextField(
-          controller: _speed_controller,
-          onChanged: (value) {
-            setState(() {
-              try {
-                setState(() {
-                  _speed = int.parse(value);
-                  print("_speed set to $_speed");
-                });
-              } on FormatException {
-                print("Invalid Speed");
-              }
-            });
-          },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Speed', // Set the error text color
-            // Other properties...
-          ));
-    } on FormatException {
-      speed = TextField(
-          controller: _speed_controller,
-          onChanged: (value) {
-            try {
-              setState(() {
-                terminalState.settings.speed = _speed;
+    print(terminalState.settings.speed);
 
-                print("_speed set to $_speed");
-              });
-            } on FormatException {
-              print("Invalid Speed");
-            }
-          },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            errorText: "Invalid Number",
-            labelText: 'Speed', // Set the error text color
-            // Other properties...
-          ));
+    TextField speed;
+    InputDecoration decoration;
+    try {
+      _speed = int.parse(_speed_controller.text);
+      decoration = const InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Speed', // Set the error text color
+        // Other properties...
+      );
+    } on FormatException {
+      decoration = const InputDecoration(
+        border: OutlineInputBorder(),
+        errorText: "Invalid Number",
+        labelText: 'Speed', // Set the error text color
+        // Other properties...
+      );
     }
+
+    speed = TextField(
+        controller: _speed_controller,
+        onChanged: (String value) {
+          setState(() {});
+        },
+        onSubmitted: (value) {
+          try {
+            warnIfConnected(context, () {
+              setState(() {
+                terminalState.settings.speed = int.parse(value);
+              });
+            });
+          } on FormatException {
+            print("Invalid Speed");
+          }
+        },
+        decoration: decoration);
 
     var speed_group = Column(
       children: [Text("Speed"), speed],
@@ -119,9 +144,11 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         value: _dataBits,
         items: items,
         onChanged: (dataBit) {
-          setState(() {
-            print("_dataBits set to $dataBit");
-            terminalState.settings.dataBits = dataBit!;
+          print("_dataBits set to $dataBit");
+          warnIfConnected(context, () {
+            setState(() {
+              terminalState.settings.dataBits = dataBit!;
+            });
           });
         });
     var data_group = Column(
@@ -137,9 +164,11 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         value: _stopBit,
         items: items11,
         onChanged: (stopbit) {
-          setState(() {
-            print("_stopbit set to $stopbit");
-            terminalState.settings.stopBits = stopbit!;
+          warnIfConnected(context, () {
+            setState(() {
+              print("_stopbit set to $stopbit");
+              terminalState.settings.stopBits = stopbit!;
+            });
           });
         });
 
@@ -157,8 +186,10 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         value: _parity,
         items: items2,
         onChanged: (parity) {
-          setState(() {
-            terminalState.settings.parity = parity!;
+          warnIfConnected(context, () {
+            setState(() {
+              terminalState.settings.parity = parity!;
+            });
           });
         });
 
@@ -174,8 +205,10 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         value: _flowControl,
         items: items3,
         onChanged: (flowcontrol) {
-          setState(() {
-            terminalState.settings.flowControl = flowcontrol!;
+          warnIfConnected(context, () {
+            setState(() {
+              terminalState.settings.flowControl = flowcontrol!;
+            });
           });
         });
 
