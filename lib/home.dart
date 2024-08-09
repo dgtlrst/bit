@@ -1,60 +1,111 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:bit/State_globals.dart';
 import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/src/rust/frb_generated.dart';
+import 'package:bit/State_app.dart';
+import 'package:bit/terminal.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/rendering.dart';
 import 'sidepanel.dart'; // side panel
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final AppState state;
+  const HomePage({super.key, required this.state});
   @override
   State<HomePage> createState() => _CreateHomePageState();
 }
 
 class _CreateHomePageState extends State<HomePage> {
-  final TextEditingController _controller = TextEditingController();
-  late Stream<String?> stream;
-  late StreamSubscription<String?> listener;
-  final List<String> _data = [];
-  final Controller controller = Controller();
-  late int thread_id;
+  Widget createTerminalGrid() {
+    Layout layout = widget.state.globalSettings.layout;
+    int num_of_terminals = 1;
+    print(layout);
+    List<Widget> terminals;
+    double childAspectRatio;
+    int crossAxisCount;
+    var size = MediaQuery.sizeOf(context);
+    double aspect = size.width / size.height;
+    int heightOffset = 0;
+    int widthOffset = -100;
+    switch (layout) {
+      case Layout.oneByOne:
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+        ];
+        childAspectRatio = aspect;
+        crossAxisCount = 1;
+      case Layout.oneByTwo:
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+          Terminal(state: widget.state, threadId: 1)
+        ];
+        childAspectRatio = aspect / 2;
+        // heightOffset = 200;
+        crossAxisCount = 2;
+      case Layout.twoByOne:
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+          Terminal(state: widget.state, threadId: 1)
+        ];
+        childAspectRatio = aspect * 2;
+        crossAxisCount = 1;
+      case Layout.twoByTwo:
+        childAspectRatio = aspect;
+        crossAxisCount = 2;
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+          Terminal(state: widget.state, threadId: 1),
+          Terminal(state: widget.state, threadId: 2),
+          Terminal(state: widget.state, threadId: 3)
+        ];
+    }
+    var grid = GridView.count(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      padding: const EdgeInsets.all(10),
+      childAspectRatio: childAspectRatio,
+      mainAxisSpacing: 10, // Adjust vertical spacing
+      crossAxisSpacing: 10, // Adjust horizontal spacing
+      crossAxisCount: crossAxisCount,
+      children: terminals,
+    );
 
-  @override
-  void initState() {
-    super.initState();
-    stream = controller.createStream();
-    thread_id = controller.getLatestThreadCreated();
-    listener = stream.listen(streamHandler());
+    return Center(
+        child: SizedBox(
+            height: size.height + heightOffset,
+            width: size.width + widthOffset,
+            child: grid));
+    // var size = MediaQuery.sizeOf(context);
+    // return ConstrainedBox(
+    //     constraints:
+    //         BoxConstraints(maxHeight: size.height, maxWidth: size.width),
+    //     child: Expanded(child: grid));
   }
 
-  void Function(String?)? streamHandler() {
-    return (String? data) {
-      if (data != null) {
-        setState(() {
-          _data.add(data);
-        });
-        print("Length of _data: ${_data.length}");
-        print("Receiving Data in Stream: $data");
-      }
-    };
-  }
+  // List<Terminal> terminals = [];
+  // for (var i = 0; i < num_of_terminals; i++) {
+  //   terminals.add(Terminal(
+  //     threadId: i,
+  //     state: widget.state,
+  //   ));
+  // }
 
-  Null Function(dynamic) onSubmitted() {
-    return (value) {
-      print("Sending to Rust: '${_controller.text}'");
-      controller.push(threadId: thread_id, data: value);
-      _controller.clear();
-    };
-  }
-
-  Widget create_output() {
-    List<Widget> widgets = _data.map((e) {
-      return Text(e);
-    }).toList();
-    return Expanded(child: Column(children: widgets));
-  }
+  // // TODO: GridViews are scrollable which we don't really want
+  // // We'll just have to manually make a row/column set for 1x1, 2x1, 1x2, 2x2
+  // // and handle it that way.
+  // var grid = GridView.count(
+  //   shrinkWrap: true,
+  //   padding: const EdgeInsets.all(10),
+  //   childAspectRatio: 16 / 9,
+  //   mainAxisSpacing: 10, // Adjust vertical spacing
+  //   crossAxisSpacing: 10, // Adjust horizontal spacing
+  //   crossAxisCount: 2,
+  //   children: terminals,
+  // );
+  // return Expanded(child: grid);
 
   @override
   Widget build(BuildContext context) {
@@ -68,30 +119,8 @@ class _CreateHomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text('terminal')),
       body: Row(
         children: [
-          const SidePanel(SidePanelPage.home), // main content
-
-          Expanded(
-            child: Column(
-              children: [
-                create_output(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextField(
-                    controller: _controller,
-                    onSubmitted: onSubmitted(),
-                    style: const TextStyle(color: textFieldTextColor),
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: textFieldColor,
-                      border: OutlineInputBorder(),
-                      labelText: 'type..',
-                      labelStyle: TextStyle(color: textFieldTextColor),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          SidePanel(SidePanelPage.home, widget.state),
+          createTerminalGrid()
         ],
       ),
     );

@@ -2,6 +2,7 @@ use crate::frb_generated::StreamSink;
 use anyhow::Result;
 use serialport::Error;
 
+#[derive(Clone)]
 pub enum DataBits {
     Five = 5,
     Six = 6,
@@ -20,6 +21,7 @@ impl From<DataBits> for serialport::DataBits {
         }
     }
 }
+#[derive(Clone)]
 
 pub enum Parity {
     None,
@@ -38,6 +40,7 @@ impl From<Parity> for serialport::Parity {
     }
 }
 
+#[derive(Clone)]
 pub enum StopBits {
     One,
     Two,
@@ -52,6 +55,7 @@ impl From<StopBits> for serialport::StopBits {
         }
     }
 }
+#[derive(Clone)]
 
 pub enum FlowControl {
     None,
@@ -70,6 +74,7 @@ impl From<FlowControl> for serialport::FlowControl {
     }
 }
 
+#[flutter_rust_bridge::frb(opaque)]
 pub struct SerialPortInfo {
     pub name: String,
     pub speed: u32,
