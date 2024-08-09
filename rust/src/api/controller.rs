@@ -47,15 +47,24 @@ impl ThreadController {
             let msgs_missed_since_start = time_since_start.as_secs() - count;
             if msgs_missed_since_start > 0 {
                 println!(
-                    "{:?} {:?}",
+                    "Thread Controller {:?}: Time since start: {:?}, Msgs missed since start: {:?}",
+                    self.thread_id,
                     time_since_start.as_secs().to_string(),
-                    msgs_missed_since_start.to_string()
+                    (msgs_missed_since_start as i64 - 1).to_string()
                 );
-                for i in 0..msgs_missed_since_start {
-                    self.stream.add(format!(
+                for _i in 0..msgs_missed_since_start {
+                    match self.stream.add(format!(
                         "Thread: {:?}: {:?}",
                         self.thread_id, time_since_start
-                    ));
+                    )) {
+                        std::result::Result::Ok(_) => {} // Succesfully Sent Message
+                        Err(_) => {
+                            println!(
+                                "Thread Controller {:?}: Something went wrong.",
+                                self.thread_id
+                            );
+                        }
+                    };
                     count += 1;
                 }
             }
@@ -88,18 +97,24 @@ impl Controller {
     }
     #[flutter_rust_bridge::frb(sync)]
     pub fn push(&self, thread_id: u32, data: String) -> Result<()> {
-        let tx = &self.thread_transmitters[&thread_id];
-        match tx.send(data) {
-            std::result::Result::Ok(_) => return Ok(()),
-            Err(_) => return Err(anyhow!("Receiver disconnected!")),
+        let tx = &self.thread_transmitters.get(&thread_id);
+        match *tx {
+            Some(sender) => match sender.send(data) {
+                std::result::Result::Ok(_) => return Ok(()),
+                Err(_) => return Err(anyhow!("Receiver disconnected!")),
+            },
+            None => Err(anyhow!("Receiver does not exist!")),
         }
     }
 
     #[flutter_rust_bridge::frb(sync)]
     pub fn end_stream(&mut self, thread_id: u32) {
-        let channel = &self.thread_transmitters[&thread_id];
-        drop(channel); // Drop channel, Should end the thread.
-        let _remove_channel_from_map = &self.thread_transmitters.remove(&thread_id);
+        println!("{:?}", self.thread_transmitters);
+        {
+            let channel = &self.thread_transmitters[&thread_id];
+            drop(channel); // Drop channel, Should end the thread.
+            let _remove_channel_from_map = &self.thread_transmitters.remove(&thread_id);
+        }
         let thread_handle = self.thread_handles.remove(&thread_id);
         match thread_handle {
             Some(handle) => match handle.join() {

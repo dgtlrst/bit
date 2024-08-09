@@ -25,13 +25,14 @@ class _CreateTerminalState extends State<Terminal>
   @override
   void initState() {
     super.initState();
+    print("Creating Terminal with TerminalState threadId: ${widget.threadId}");
     terminalState = widget.state.getThreadAndCreateIfNotExist(widget.threadId);
     _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    terminalState.in_use = false;
+    terminalState.inUse = false;
     _tabController.dispose();
     super.dispose();
   }

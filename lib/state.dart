@@ -10,8 +10,10 @@ import 'package:bit/src/rust/api/serial.dart';
 
 class TerminalState {
   final int threadId;
-  final Stream<String> stream;
-  late StreamSubscription<String> _listener;
+  bool connected = false;
+  final Controller controller;
+  Stream<String>? _stream;
+  StreamSubscription<String>? _listener;
   final SerialPortInfo settings = SerialPortInfo(
       name: "",
       speed: 9600,
@@ -19,15 +21,42 @@ class TerminalState {
       parity: Parity.none,
       stopBits: StopBits.one,
       flowControl: FlowControl.none);
-  bool in_use = false;
+  bool inUse = false;
   final List<String> _rxData = [];
-  TerminalState({required this.threadId, required this.stream}) {
-    _listener = stream.listen(streamHandler());
+  TerminalState({required this.threadId, required this.controller});
+
+  void connectIfNotConnected() {
+    if (!connected) {
+      print("Thread $threadId: Connecting");
+      controller.setNewThreadId(threadId: threadId);
+      _stream = controller.createStream().asBroadcastStream();
+      _listener = _stream!.listen(
+          streamHandler()); // Stream should exist since we just created the stream
+      connected = true;
+    }
   }
 
-  Stream<String> getTerminalStream() {
+  void disconnectIfNotDisconnected() {
+    if (connected) {
+      print("Thread $threadId: Disconnecting");
+      controller.endStream(threadId: threadId);
+      if (_listener != null) {
+        _listener!.cancel();
+        _listener = null;
+      }
+      _stream = null;
+      connected = false;
+    }
+  }
+
+  void push(String data) {
+    print("Thread $threadId: Sending to Rust: '$data'");
+    controller.push(threadId: threadId, data: data);
+  }
+
+  Stream<String>? getTerminalStream() {
     // To allow a widget to set up a subscription
-    return stream;
+    return _stream;
   }
 
   List<String> getTerminalData() {
@@ -36,37 +65,38 @@ class TerminalState {
 
   void Function(String) streamHandler() {
     return (String data) {
+      print("Thread $threadId: Receving '$data'");
       _rxData.add(data);
     };
   }
 }
 
 class AppState {
-  int _threadIdCounter = 0;
   final Controller _controller = Controller();
-  HashMap<int, TerminalState> _threads = HashMap();
+  final HashMap<int, TerminalState> _threads = HashMap();
   AppState();
 
-  int newTerminalState() {
+  void newTerminalState(int threadId) {
+    if (getTerminalState(threadId) != null) {
+      throw Exception("This thread already exists");
+    }
     // Returns threadId
-    int threadId = _threadIdCounter;
-    _threadIdCounter += 1;
     _controller.setNewThreadId(threadId: threadId);
-    Stream<String> stream = _controller.createStream().asBroadcastStream();
-    TerminalState terminal = TerminalState(threadId: threadId, stream: stream);
+    TerminalState terminal =
+        TerminalState(threadId: threadId, controller: _controller);
     // No need to check
     // Whether existing terminal in HashMap since we always increment by one
     // If a user maxes out a 64 bit integer that's on them.
     _threads.putIfAbsent(threadId, () => terminal);
-    return threadId;
-  }
-
-  void pushToTerminal(int threadId, String data) {
-    _controller.push(threadId: threadId, data: data);
   }
 
   void deleteTerminal(int threadId) {
-    _controller.endStream(threadId: threadId);
+    var thread = _threads[threadId];
+    if (thread != null) {
+      thread.disconnectIfNotDisconnected();
+    } else {
+      print("Terminal with Id: $threadId does not exist");
+    }
     _threads.remove(threadId);
   }
 
@@ -74,18 +104,16 @@ class AppState {
     return _threads[threadId];
   }
 
-  getThreadAndCreateIfNotExist(int threadId) {
-    // Returns threadId
-    for (TerminalState thread in _threads.values) {
-      if (thread.in_use == false) {
-        thread.in_use = true;
-        return getTerminalState(thread.threadId);
-      }
+  TerminalState getThreadAndCreateIfNotExist(int threadId) {
+    TerminalState? terminal = getTerminalState(threadId);
+    if (terminal != null) {
+      return terminal;
+    } else {
+      // If not yet returned create new thread
+      newTerminalState(threadId);
+      TerminalState state = getTerminalState(threadId)!;
+      state.inUse = true;
+      return state;
     }
-    // If not yet returned create new thread
-    int terminalId = newTerminalState();
-    TerminalState state = getTerminalState(threadId)!;
-    state.in_use = true;
-    return state;
   }
 }

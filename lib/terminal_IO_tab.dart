@@ -24,7 +24,7 @@ class TerminalIOTab extends StatefulWidget {
 class _CreateTerminalIOTabState extends State<TerminalIOTab>
     with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
-  late StreamSubscription<String> listener;
+  StreamSubscription<String>? listener;
   late List<String> _data;
   final ScrollController _scrollController = ScrollController();
   final FocusNode myFocus = FocusNode();
@@ -35,15 +35,33 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     super.initState();
     terminalState = widget.state.getTerminalState(widget.threadId)!;
     _data = terminalState.getTerminalData();
-    Stream<String> stream = terminalState.getTerminalStream();
+    if (terminalState.connected) {
+      connect();
+    }
     print("Thread Id in Dart: ${widget.threadId}");
-    listener = stream.listen(streamHandler());
   }
 
   @override
   void dispose() {
-    listener.cancel();
+    listener?.cancel();
     super.dispose();
+  }
+
+  void connect() {
+    terminalState.connectIfNotConnected();
+    Stream<String>? stream = terminalState.getTerminalStream();
+    if (stream == null) {
+      throw Exception(
+          "Something went wrong in creating the Stream. Error handling needs to be implemented!");
+    } else {
+      listener = stream.listen(streamHandler());
+      setState(() {});
+    }
+  }
+
+  void disconnect() {
+    terminalState.disconnectIfNotDisconnected();
+    setState(() {});
   }
 
   void Function(String) streamHandler() {
@@ -62,8 +80,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
   }
 
   void onSubmitted(String value) {
-    print("Sending to Rust: '${_controller.text}'");
-    widget.state.pushToTerminal(widget.threadId, value);
+    terminalState.push(value);
     _controller.clear();
   }
 
@@ -80,17 +97,17 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
   }
 
   Widget connect_disconnect_binary() {
-    var connected = true;
-    if (connected) {
+    if (terminalState.connected) {
       return Padding(
         padding: const EdgeInsets.all(5),
-        child:
-            IconButton.filled(onPressed: () => {}, icon: Icon(Icons.power_off)),
+        child: IconButton.filled(
+            onPressed: () => disconnect(), icon: Icon(Icons.power_off)),
       );
     } else {
       return Padding(
         padding: const EdgeInsets.all(5),
-        child: IconButton.filled(onPressed: () => {}, icon: Icon(Icons.power)),
+        child: IconButton.filled(
+            onPressed: () => connect(), icon: Icon(Icons.power)),
       );
     }
   }
