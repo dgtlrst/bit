@@ -33,7 +33,7 @@ class _CreateSettingsState extends State<Settings> {
     Column layout_group = Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Center(
+        const Center(
           child: Row(children: [
             Text("Layout"),
             Tooltip(

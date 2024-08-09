@@ -8,6 +8,7 @@ import 'package:bit/src/rust/frb_generated.dart';
 import 'package:bit/State_app.dart';
 import 'package:bit/terminal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'sidepanel.dart'; // side panel
 
 class HomePage extends StatefulWidget {
@@ -21,39 +22,90 @@ class _CreateHomePageState extends State<HomePage> {
   Widget createTerminalGrid() {
     Layout layout = widget.state.globalSettings.layout;
     int num_of_terminals = 1;
+    print(layout);
+    List<Widget> terminals;
+    double childAspectRatio;
+    int crossAxisCount;
+    var size = MediaQuery.sizeOf(context);
+    double aspect = size.width / size.height;
+    int heightOffset = 0;
+    int widthOffset = -100;
     switch (layout) {
       case Layout.oneByOne:
-        num_of_terminals = 1;
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+        ];
+        childAspectRatio = aspect;
+        crossAxisCount = 1;
       case Layout.oneByTwo:
-        num_of_terminals = 2;
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+          Terminal(state: widget.state, threadId: 1)
+        ];
+        childAspectRatio = aspect / 2;
+        heightOffset = 200;
+        crossAxisCount = 2;
       case Layout.twoByOne:
-        num_of_terminals = 2;
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+          Terminal(state: widget.state, threadId: 1)
+        ];
+        childAspectRatio = aspect * 2;
+        crossAxisCount = 1;
       case Layout.twoByTwo:
-        num_of_terminals = 4;
+        childAspectRatio = aspect;
+        crossAxisCount = 2;
+        terminals = [
+          Terminal(state: widget.state, threadId: 0),
+          Terminal(state: widget.state, threadId: 1),
+          Terminal(state: widget.state, threadId: 2),
+          Terminal(state: widget.state, threadId: 3)
+        ];
     }
-
-    List<Terminal> terminals = [];
-    for (var i = 0; i < num_of_terminals; i++) {
-      terminals.add(Terminal(
-        threadId: i,
-        state: widget.state,
-      ));
-    }
-
-    // TODO: GridViews are scrollable which we don't really want
-    // We'll just have to manually make a row/column set for 1x1, 2x1, 1x2, 2x2
-    // and handle it that way.
     var grid = GridView.count(
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: const EdgeInsets.all(10),
-      childAspectRatio: 16 / 9,
+      childAspectRatio: childAspectRatio,
       mainAxisSpacing: 10, // Adjust vertical spacing
       crossAxisSpacing: 10, // Adjust horizontal spacing
-      crossAxisCount: 2,
+      crossAxisCount: crossAxisCount,
       children: terminals,
     );
-    return Expanded(child: grid);
+
+    return Center(
+        child: SizedBox(
+            height: size.height + heightOffset,
+            width: size.width + widthOffset,
+            child: grid));
+    // var size = MediaQuery.sizeOf(context);
+    // return ConstrainedBox(
+    //     constraints:
+    //         BoxConstraints(maxHeight: size.height, maxWidth: size.width),
+    //     child: Expanded(child: grid));
   }
+
+  // List<Terminal> terminals = [];
+  // for (var i = 0; i < num_of_terminals; i++) {
+  //   terminals.add(Terminal(
+  //     threadId: i,
+  //     state: widget.state,
+  //   ));
+  // }
+
+  // // TODO: GridViews are scrollable which we don't really want
+  // // We'll just have to manually make a row/column set for 1x1, 2x1, 1x2, 2x2
+  // // and handle it that way.
+  // var grid = GridView.count(
+  //   shrinkWrap: true,
+  //   padding: const EdgeInsets.all(10),
+  //   childAspectRatio: 16 / 9,
+  //   mainAxisSpacing: 10, // Adjust vertical spacing
+  //   crossAxisSpacing: 10, // Adjust horizontal spacing
+  //   crossAxisCount: 2,
+  //   children: terminals,
+  // );
+  // return Expanded(child: grid);
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +119,7 @@ class _CreateHomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text('terminal')),
       body: Row(
         children: [
-          SidePanel(SidePanelPage.home, widget.state), // main content
+          SidePanel(SidePanelPage.home, widget.state),
           createTerminalGrid()
         ],
       ),
