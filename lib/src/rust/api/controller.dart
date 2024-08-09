@@ -9,20 +9,6 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These functions are ignored because they are not marked as `pub`: `main`, `new`
 // These types are ignored because they are not used by any `pub` functions: `TerminalRunner`
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>
-abstract class Controller implements RustOpaqueInterface {
-  Stream<String> createStream();
-
-  void endStream({required int threadId});
-
-  factory Controller() =>
-      RustLib.instance.api.crateApiControllerControllerNew();
-
-  void push({required int threadId, required String data});
-
-  void setNewThreadId({required int threadId});
-}
-
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<TerminalController>>
 abstract class TerminalController implements RustOpaqueInterface {
   Stream<String> createStream();

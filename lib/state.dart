@@ -11,7 +11,7 @@ import 'package:bit/src/rust/api/serial.dart';
 class TerminalState {
   final int threadId;
   bool connected = false;
-  final Controller controller;
+  late TerminalController controller;
   Stream<String>? _stream;
   StreamSubscription<String>? _listener;
   final SerialPortInfo settings = SerialPortInfo(
@@ -23,12 +23,13 @@ class TerminalState {
       flowControl: FlowControl.none);
   bool inUse = false;
   final List<String> _rxData = [];
-  TerminalState({required this.threadId, required this.controller});
+  TerminalState({required this.threadId}) {
+    controller = TerminalController(threadId: threadId);
+  }
 
   void connectIfNotConnected() {
     if (!connected) {
       print("Thread $threadId: Connecting");
-      controller.setNewThreadId(threadId: threadId);
       _stream = controller.createStream().asBroadcastStream();
       _listener = _stream!.listen(
           streamHandler()); // Stream should exist since we just created the stream
@@ -39,7 +40,7 @@ class TerminalState {
   void disconnectIfNotDisconnected() {
     if (connected) {
       print("Thread $threadId: Disconnecting");
-      controller.endStream(threadId: threadId);
+      controller.endStream();
       if (_listener != null) {
         _listener!.cancel();
         _listener = null;
@@ -51,7 +52,7 @@ class TerminalState {
 
   void push(String data) {
     print("Thread $threadId: Sending to Rust: '$data'");
-    controller.push(threadId: threadId, data: data);
+    controller.push(data: data);
   }
 
   Stream<String>? getTerminalStream() {
@@ -72,7 +73,6 @@ class TerminalState {
 }
 
 class AppState {
-  final Controller _controller = Controller();
   final HashMap<int, TerminalState> _threads = HashMap();
   AppState();
 
@@ -81,9 +81,7 @@ class AppState {
       throw Exception("This thread already exists");
     }
     // Returns threadId
-    _controller.setNewThreadId(threadId: threadId);
-    TerminalState terminal =
-        TerminalState(threadId: threadId, controller: _controller);
+    TerminalState terminal = TerminalState(threadId: threadId);
     // No need to check
     // Whether existing terminal in HashMap since we always increment by one
     // If a user maxes out a 64 bit integer that's on them.

@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.1.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1594936099;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1889628169;
 
 // Section: executor
 
@@ -47,248 +47,6 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
-fn wire__crate__api__controller__Controller_create_stream_impl(
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "Controller_create_stream",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <RustOpaqueMoi<
-                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>,
-            >>::sse_decode(&mut deserializer);
-            let api_stream_sink =
-                <StreamSink<String, flutter_rust_bridge::for_generated::SseCodec>>::sse_decode(
-                    &mut deserializer,
-                );
-            deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, true,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
-                        _ => unreachable!(),
-                    }
-                }
-                let mut api_that_guard = api_that_guard.unwrap();
-                let output_ok = Result::<_, ()>::Ok({
-                    crate::api::controller::Controller::create_stream(
-                        &mut *api_that_guard,
-                        api_stream_sink,
-                    );
-                })?;
-                Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__controller__Controller_end_stream_impl(
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "Controller_end_stream",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <RustOpaqueMoi<
-                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>,
-            >>::sse_decode(&mut deserializer);
-            let api_thread_id = <u32>::sse_decode(&mut deserializer);
-            deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, true,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
-                        _ => unreachable!(),
-                    }
-                }
-                let mut api_that_guard = api_that_guard.unwrap();
-                let output_ok = Result::<_, ()>::Ok({
-                    crate::api::controller::Controller::end_stream(
-                        &mut *api_that_guard,
-                        api_thread_id,
-                    );
-                })?;
-                Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__controller__Controller_new_impl(
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "Controller_new",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let output_ok = Result::<_, ()>::Ok(crate::api::controller::Controller::new())?;
-                Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__controller__Controller_push_impl(
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "Controller_push",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <RustOpaqueMoi<
-                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>,
-            >>::sse_decode(&mut deserializer);
-            let api_thread_id = <u32>::sse_decode(&mut deserializer);
-            let api_data = <String>::sse_decode(&mut deserializer);
-            deserializer.end();
-            transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                (move || {
-                    let mut api_that_guard = None;
-                    let decode_indices_ =
-                        flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                            flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                &api_that, 0, false,
-                            ),
-                        ]);
-                    for i in decode_indices_ {
-                        match i {
-                            0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                            _ => unreachable!(),
-                        }
-                    }
-                    let api_that_guard = api_that_guard.unwrap();
-                    let output_ok = crate::api::controller::Controller::push(
-                        &*api_that_guard,
-                        api_thread_id,
-                        api_data,
-                    )?;
-                    Ok(output_ok)
-                })(),
-            )
-        },
-    )
-}
-fn wire__crate__api__controller__Controller_set_new_thread_id_impl(
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "Controller_set_new_thread_id",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <RustOpaqueMoi<
-                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>,
-            >>::sse_decode(&mut deserializer);
-            let api_thread_id = <u32>::sse_decode(&mut deserializer);
-            deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, true,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
-                        _ => unreachable!(),
-                    }
-                }
-                let mut api_that_guard = api_that_guard.unwrap();
-                let output_ok = Result::<_, ()>::Ok({
-                    crate::api::controller::Controller::set_new_thread_id(
-                        &mut *api_that_guard,
-                        api_thread_id,
-                    );
-                })?;
-                Ok(output_ok)
-            })())
-        },
-    )
-}
 fn wire__crate__api__controller__TerminalController_create_stream_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1258,9 +1016,6 @@ fn wire__crate__api__serial__stop_bits_from_impl(
 // Section: related_funcs
 
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
-    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>
-);
-flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SerialPortInfo>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
@@ -1274,16 +1029,6 @@ impl SseDecode for flutter_rust_bridge::for_generated::anyhow::Error {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <String>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::anyhow::anyhow!("{}", inner);
-    }
-}
-
-impl SseDecode for Controller {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner = <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>,
-        >>::sse_decode(deserializer);
-        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
 }
 
@@ -1304,16 +1049,6 @@ impl SseDecode for TerminalController {
             flutter_rust_bridge::for_generated::RustAutoOpaqueInner<TerminalController>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
-    }
-}
-
-impl SseDecode
-    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>
-{
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner = <usize>::sse_decode(deserializer);
-        return decode_rust_opaque_moi(inner);
     }
 }
 
@@ -1490,117 +1225,91 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => {
-            wire__crate__api__controller__Controller_create_stream_impl(ptr, rust_vec_len, data_len)
-        }
-        2 => wire__crate__api__controller__Controller_end_stream_impl(ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__controller__Controller_new_impl(ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__controller__Controller_push_impl(ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__controller__Controller_set_new_thread_id_impl(
+        1 => wire__crate__api__controller__TerminalController_create_stream_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        6 => wire__crate__api__controller__TerminalController_create_stream_impl(
+        2 => wire__crate__api__controller__TerminalController_end_stream_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        7 => wire__crate__api__controller__TerminalController_end_stream_impl(
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        8 => wire__crate__api__controller__TerminalController_new_impl(ptr, rust_vec_len, data_len),
-        9 => {
+        3 => wire__crate__api__controller__TerminalController_new_impl(ptr, rust_vec_len, data_len),
+        4 => {
             wire__crate__api__controller__TerminalController_push_impl(ptr, rust_vec_len, data_len)
         }
-        10 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_data_bits_impl(
+        5 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_data_bits_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        11 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_flow_control_impl(
+        6 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_flow_control_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        12 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_name_impl(
+        7 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_name_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        13 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_parity_impl(
+        8 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_parity_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        14 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_speed_impl(
+        9 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_speed_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        15 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_stop_bits_impl(
+        10 => wire__crate__api__serial__SerialPortInfo_auto_accessor_get_stop_bits_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        16 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_data_bits_impl(
+        11 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_data_bits_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        17 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_flow_control_impl(
+        12 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_flow_control_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        18 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_name_impl(
+        13 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_name_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        19 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_parity_impl(
+        14 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_parity_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        20 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_speed_impl(
+        15 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_speed_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        21 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_stop_bits_impl(
+        16 => wire__crate__api__serial__SerialPortInfo_auto_accessor_set_stop_bits_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        22 => wire__crate__api__serial__SerialPortInfo_new_impl(ptr, rust_vec_len, data_len),
-        23 => wire__crate__api__serial__data_bits_from_impl(ptr, rust_vec_len, data_len),
-        24 => wire__crate__api__serial__flow_control_from_impl(ptr, rust_vec_len, data_len),
-        25 => wire__crate__api__serial__list_available_ports_impl(ptr, rust_vec_len, data_len),
-        26 => wire__crate__api__serial__parity_from_impl(ptr, rust_vec_len, data_len),
-        27 => wire__crate__api__serial__stop_bits_from_impl(ptr, rust_vec_len, data_len),
+        17 => wire__crate__api__serial__SerialPortInfo_new_impl(ptr, rust_vec_len, data_len),
+        18 => wire__crate__api__serial__data_bits_from_impl(ptr, rust_vec_len, data_len),
+        19 => wire__crate__api__serial__flow_control_from_impl(ptr, rust_vec_len, data_len),
+        20 => wire__crate__api__serial__list_available_ports_impl(ptr, rust_vec_len, data_len),
+        21 => wire__crate__api__serial__parity_from_impl(ptr, rust_vec_len, data_len),
+        22 => wire__crate__api__serial__stop_bits_from_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
 
 // Section: rust2dart
-
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<Controller> {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
-            .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<Controller> {}
-
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Controller>> for Controller {
-    fn into_into_dart(self) -> FrbWrapper<Controller> {
-        self.into()
-    }
-}
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<SerialPortInfo> {
@@ -1720,13 +1429,6 @@ impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
     }
 }
 
-impl SseEncode for Controller {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
-    }
-}
-
 impl SseEncode for SerialPortInfo {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1738,17 +1440,6 @@ impl SseEncode for TerminalController {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<TerminalController>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
-    }
-}
-
-impl SseEncode
-    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>
-{
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        let (ptr, size) = self.sse_encode_raw();
-        <usize>::sse_encode(ptr, serializer);
-        <i32>::sse_encode(size, serializer);
     }
 }
 
@@ -1940,20 +1631,6 @@ mod io {
     flutter_rust_bridge::frb_generated_boilerplate_io!();
 
     #[no_mangle]
-    pub extern "C" fn frbgen_bit_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>::increment_strong_count(ptr as _);
-    }
-
-    #[no_mangle]
-    pub extern "C" fn frbgen_bit_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>::decrement_strong_count(ptr as _);
-    }
-
-    #[no_mangle]
     pub extern "C" fn frbgen_bit_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
         ptr: *const std::ffi::c_void,
     ) {
@@ -2006,20 +1683,6 @@ mod web {
     // Section: boilerplate
 
     flutter_rust_bridge::frb_generated_boilerplate_web!();
-
-    #[wasm_bindgen]
-    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>::increment_strong_count(ptr as _);
-    }
-
-    #[wasm_bindgen]
-    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerController(
-        ptr: *const std::ffi::c_void,
-    ) {
-        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Controller>>::decrement_strong_count(ptr as _);
-    }
 
     #[wasm_bindgen]
     pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(

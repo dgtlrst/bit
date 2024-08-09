@@ -17,8 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _CreateHomePageState extends State<HomePage> {
-  final Controller controller = Controller();
-
   Widget createTerminalGrid() {
     int num_of_terminals =
         4; // TODO: Make this configurable with global settings page at some point
