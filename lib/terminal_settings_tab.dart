@@ -1,7 +1,8 @@
 import 'dart:ffi';
 
+import 'package:bit/State_terminal.dart';
 import 'package:bit/src/rust/api/serial.dart';
-import 'package:bit/state.dart';
+import 'package:bit/State_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
