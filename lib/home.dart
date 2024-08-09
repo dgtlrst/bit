@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bit/State_globals.dart';
 import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/src/rust/frb_generated.dart';
-import 'package:bit/state.dart';
+import 'package:bit/State_app.dart';
 import 'package:bit/terminal.dart';
 import 'package:flutter/material.dart';
 import 'sidepanel.dart'; // side panel
@@ -18,8 +19,19 @@ class HomePage extends StatefulWidget {
 
 class _CreateHomePageState extends State<HomePage> {
   Widget createTerminalGrid() {
-    int num_of_terminals =
-        4; // TODO: Make this configurable with global settings page at some point
+    Layout layout = widget.state.globalSettings.layout;
+    int num_of_terminals = 1;
+    switch (layout) {
+      case Layout.oneByOne:
+        num_of_terminals = 1;
+      case Layout.oneByTwo:
+        num_of_terminals = 2;
+      case Layout.twoByOne:
+        num_of_terminals = 2;
+      case Layout.twoByTwo:
+        num_of_terminals = 4;
+    }
+
     List<Terminal> terminals = [];
     for (var i = 0; i < num_of_terminals; i++) {
       terminals.add(Terminal(

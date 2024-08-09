@@ -5,10 +5,12 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:bit/State_globals.dart';
 import 'package:bit/State_terminal.dart';
 
 class AppState {
   final HashMap<int, TerminalState> _threads = HashMap();
+  GlobalSettings globalSettings = GlobalSettings();
   AppState();
 
   void newTerminalState(int threadId) {

@@ -1,4 +1,4 @@
-import 'package:bit/state.dart';
+import 'package:bit/State_app.dart';
 import 'package:flutter/material.dart';
 
 import 'settings.dart'; // settings

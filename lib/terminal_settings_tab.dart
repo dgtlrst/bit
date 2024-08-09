@@ -90,7 +90,6 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           onChanged: (value) {
             try {
               setState(() {
-                _speed = int.parse(value);
                 terminalState.settings.speed = _speed;
 
                 print("_speed set to $_speed");
@@ -122,7 +121,6 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         onChanged: (dataBit) {
           setState(() {
             print("_dataBits set to $dataBit");
-            _dataBits = dataBit!;
             terminalState.settings.dataBits = dataBit!;
           });
         });
@@ -141,7 +139,6 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         onChanged: (stopbit) {
           setState(() {
             print("_stopbit set to $stopbit");
-            _stopBit = stopbit!;
             terminalState.settings.stopBits = stopbit!;
           });
         });
@@ -161,7 +158,6 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         items: items2,
         onChanged: (parity) {
           setState(() {
-            _parity = parity!;
             terminalState.settings.parity = parity!;
           });
         });
@@ -179,7 +175,6 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         items: items3,
         onChanged: (flowcontrol) {
           setState(() {
-            _flowControl = flowcontrol!;
             terminalState.settings.flowControl = flowcontrol!;
           });
         });
