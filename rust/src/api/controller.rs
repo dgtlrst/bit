@@ -114,7 +114,8 @@ impl Controller {
             let channel = &self.thread_transmitters[&thread_id];
             drop(channel); // Drop channel, Should end the thread.
             let _remove_channel_from_map = &self.thread_transmitters.remove(&thread_id);
-        }
+        } // This scope exists to drop all this stuff from scope so that the thread can join. Could probably just not make them variables
+          // But the variable name makes it more obvious what it does so we do this instead.
         let thread_handle = self.thread_handles.remove(&thread_id);
         match thread_handle {
             Some(handle) => match handle.join() {
