@@ -6,12 +6,25 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:bit/State_globals.dart';
+import 'package:bit/State_persistent_datastore.dart';
 import 'package:bit/State_terminal.dart';
 
 class AppState {
   final HashMap<int, TerminalState> _threads = HashMap();
   GlobalSettings globalSettings = GlobalSettings();
-  AppState();
+  PersistentDataStore dataStore;
+  AppState._create({required this.dataStore});
+
+  /// Public factory
+  static Future<AppState> create() async {
+    // Call the private constructor
+    var dataStore = await PersistentDataStore.create();
+    var state = AppState._create(dataStore: dataStore);
+    // Do initialization that requires async
+
+    // Return the fully initialized object
+    return state;
+  }
 
   void newTerminalState(int threadId) {
     if (getTerminalState(threadId) != null) {

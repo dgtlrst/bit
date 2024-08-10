@@ -7,14 +7,15 @@ import 'home.dart'; // home
 
 Future<void> main() async {
   await RustLib.init();
+  AppState state = await AppState.create();
   // Here we can load data saved to disk, Not sure when we'd write config to disk
   // Need to investigate how Darts lifecycle stuff works.
-  runApp(MyApp());
+  runApp(MyApp(state: state));
 }
 
 class MyApp extends StatelessWidget {
-  final AppState state = AppState();
-  MyApp({super.key});
+  final AppState state;
+  const MyApp({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
