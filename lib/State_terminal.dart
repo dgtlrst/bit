@@ -1,25 +1,22 @@
 import 'dart:async';
 
+import 'package:bit/State_persistent_datastore.dart';
 import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
 
 class TerminalState {
+  final PersistentDataStore dataStore;
   final int threadId;
   bool connected = false;
   late TerminalController controller;
   Stream<String>? _stream;
   StreamSubscription<String>? _listener;
-  final SerialPortInfo _settings = SerialPortInfo(
-      name: "",
-      speed: 9600,
-      dataBits: DataBits.eight,
-      parity: Parity.none,
-      stopBits: StopBits.one,
-      flowControl: FlowControl.none);
+  late SerialPortInfo _settings;
   bool inUse = false;
   final List<String> _rxData = [];
-  TerminalState({required this.threadId}) {
+  TerminalState({required this.threadId, required this.dataStore}) {
     controller = TerminalController(threadId: threadId);
+    _settings = dataStore.loadTerminalState(threadId);
   }
 
   void connectIfNotConnected() {
@@ -92,25 +89,31 @@ class TerminalState {
 
   void setSettingsName(String name) {
     _settings.name = name;
+    dataStore.saveTerminalState(threadId, _settings);
   }
 
   void setSettingsSpeed(int speed) {
     _settings.speed = speed;
+    dataStore.saveTerminalState(threadId, _settings);
   }
 
   void setSettingsDataBits(DataBits dataBit) {
     _settings.dataBits = dataBit;
+    dataStore.saveTerminalState(threadId, _settings);
   }
 
   void setSettingsParity(Parity parity) {
     _settings.parity = parity;
+    dataStore.saveTerminalState(threadId, _settings);
   }
 
   void setSettingsStopBits(StopBits stopBit) {
     _settings.stopBits = stopBit;
+    dataStore.saveTerminalState(threadId, _settings);
   }
 
   void setSettingsFlowControl(FlowControl flowControl) {
     _settings.flowControl = flowControl;
+    dataStore.saveTerminalState(threadId, _settings);
   }
 }

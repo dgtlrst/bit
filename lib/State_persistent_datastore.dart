@@ -1,4 +1,5 @@
 import 'package:bit/State_globals.dart';
+import 'package:bit/src/rust/api/serial.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentDataStore {
@@ -25,15 +26,24 @@ class PersistentDataStore {
     return dataStore;
   }
 
-  saveGlobalWarnings(bool warnings) {
-    // It saves when it saves
-    _prefsWithCache.setBool("warnings", warnings).catchError((e, s) {
-      print("Failed to save Layout!: ${e.toString()}");
+  void saveTerminalState(int threadId, SerialPortInfo serialPortInfo) {
+    _prefsWithCache
+        .setString("terminalState_$threadId", serialPortInfo.toJson()!)
+        .catchError((e, s) {
+      print("Failed to save terminalState!: ${e.toString()}");
     });
     ;
   }
 
-  saveGlobalLayout(Layout layout) {
+  void saveGlobalWarnings(bool warnings) {
+    // It saves when it saves
+    _prefsWithCache.setBool("warnings", warnings).catchError((e, s) {
+      print("Failed to save Warnings!: ${e.toString()}");
+    });
+    ;
+  }
+
+  void saveGlobalLayout(Layout layout) {
     // It saves when it saves
     _prefsWithCache
         .setString("layout", layout.name.toString())
@@ -74,6 +84,39 @@ class PersistentDataStore {
       print(e);
       // layout does not exist! Or Type is wrong. Or could not cast! Use default oneByOne.
       return defaultLayout;
+    }
+  }
+
+  SerialPortInfo loadTerminalState(int threadId) {
+    SerialPortInfo defaultSerialPortInfo = SerialPortInfo(
+        name: "",
+        speed: 9600,
+        dataBits: DataBits.eight,
+        parity: Parity.none,
+        stopBits: StopBits.one,
+        flowControl: FlowControl.none);
+    SerialPortInfo? serialPortInfo;
+    try {
+      String? result = _prefsWithCache.getString("terminalState_$threadId");
+      if (result != null) {
+        serialPortInfo = SerialPortInfo.fromJson(json: result);
+        if (serialPortInfo != null) {
+          print("Loaded SerialPortInfo from Disk");
+          return serialPortInfo;
+        } else {
+          print("Loading SerialPortInfo was null, using Default");
+
+          return defaultSerialPortInfo;
+        }
+      } else {
+        print("Loading SerialPortInfo String was null, using Default");
+        return defaultSerialPortInfo;
+      }
+    } catch (e) {
+      print(e);
+      print("Loading SerialPortInfo errored, using Default");
+      // layout does not exist! Or Type is wrong. Or could not cast! Use default oneByOne.
+      return defaultSerialPortInfo;
     }
   }
 }

@@ -33,7 +33,8 @@ class AppState {
       throw Exception("This thread already exists");
     }
     // Returns threadId
-    TerminalState terminal = TerminalState(threadId: threadId);
+    TerminalState terminal =
+        TerminalState(threadId: threadId, dataStore: dataStore);
     // No need to check
     // Whether existing terminal in HashMap since we always increment by one
     // If a user maxes out a 64 bit integer that's on them.

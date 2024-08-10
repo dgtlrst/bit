@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:bit/State_terminal.dart';
@@ -25,12 +26,20 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   String _name_setting_element = "Port Name";
   TextEditingController _speed_controller = TextEditingController(text: "9600");
   late TerminalState terminalState;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     terminalState = widget.state.getTerminalState(widget.threadId)!;
     _speed_controller.text = terminalState.getSettingsSpeed().toString();
+  }
+
+  @override
+  void dispose() {
+    _speed_controller.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 
   void warnIfConnected(BuildContext context, void Function() onAccept) {
@@ -55,10 +64,55 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       }
     } else {
       // If warnings are disabled we do nothing.
-      terminalState.disconnectIfNotDisconnected();
-      onAccept();
-      terminalState.connectIfNotConnected();
+      if (terminalState.connected) {
+        terminalState.disconnectIfNotDisconnected();
+        onAccept();
+        terminalState.connectIfNotConnected();
+      } else {
+        onAccept();
+      }
     }
+  }
+
+  String validateSerialPortInfoName(List<SerialPortInfo> serialPortInfoList) {
+    // The name loaded from disk may no longer be connected so we need to check that
+    String _name = terminalState.getSettingsName();
+    // If name from disk still exists on device then we choose that so it "remembers"
+    // which com port it was on. It cannot remember the device name for obvious reasons.
+    // So if the user moves that around or the OS reassigns names on startup there
+    // is nothing we can do about that.
+    for (SerialPortInfo serialPortInfo in serialPortInfoList) {
+      if (_name == serialPortInfo.name) {
+        return _name;
+      }
+    }
+    // If name from disk does not exist.
+    try {
+      _name = serialPortInfoList[0].name;
+      return _name;
+    } on RangeError {
+      print("No valid ports available."); // debug log here instead
+      _name = "N/A";
+      return _name;
+    }
+  }
+
+  void _onChangedHandlerSpeed(String value) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(Duration(milliseconds: 250), () {
+      print("onEditingComplete Triggered: $value");
+      try {
+        warnIfConnected(context, () {
+          setState(() {
+            var v = int.parse(value);
+            terminalState.setSettingsSpeed(v);
+          });
+        });
+      } on FormatException {
+        setState(() {});
+        print("Invalid Speed");
+      }
+    });
   }
 
   GridView settingsGrid() {
@@ -67,15 +121,8 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       return DropdownMenuItem<String>(value: v.name, child: Text(v.name));
     }).toList();
 
-    String _name = terminalState.getSettingsName();
-    try {
-      _name = serialPortInfo[0].name;
-    } on RangeError {
-      print("No valid ports available."); // debug log here instead
-      _name = "N/A";
-      _name_setting_element = "No Ports";
-    }
-
+    _name_setting_element = "No Ports";
+    String _name = validateSerialPortInfoName(serialPortInfo);
     var name = DropdownButton(
         value: _name,
         items: items9,
@@ -113,20 +160,12 @@ class _CreateSettingsTabState extends State<SettingsTab> {
 
     speed = TextField(
         controller: _speed_controller,
-        onChanged: (String value) {
-          setState(() {});
-        },
-        onSubmitted: (value) {
-          try {
-            warnIfConnected(context, () {
-              setState(() {
-                var v = int.parse(value);
-                terminalState.setSettingsSpeed(v);
-              });
-            });
-          } on FormatException {
-            print("Invalid Speed");
-          }
+        // onChanged: (String value) {
+        //   setState(() {});
+        // },
+        onChanged: (value) {
+          // Timer only triggers after a 250 ms delay
+          _onChangedHandlerSpeed(value);
         },
         decoration: decoration);
 
