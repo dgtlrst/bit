@@ -22,11 +22,11 @@ class _CreateSettingsState extends State<Settings> {
     }).toList();
     var layout_btn = DropdownButton(
         hint: Text('Layout'),
-        value: widget.state.globalSettings.layout,
+        value: widget.state.globalSettings.getLayout(),
         items: layouts,
         onChanged: (value) {
           setState(() {
-            widget.state.globalSettings.layout = value!;
+            widget.state.globalSettings.setLayout(value!);
           });
         });
 
@@ -51,15 +51,13 @@ class _CreateSettingsState extends State<Settings> {
   Column enableTerminalWarningsTickBox() {
     var title = Text("Enable Terminal Warnings");
     var tickbox = Checkbox.adaptive(
-      value: widget.state.globalSettings.warnings,
+      value: widget.state.globalSettings.getWarnings(),
       onChanged: (value) {
         setState(() {
           if (value == true) {
-            widget.state.globalSettings.warnings =
-                true; // Can't be null unless tristate set to true, default is false
+            widget.state.globalSettings.setWarnings(true);
           } else {
-            widget.state.globalSettings.warnings =
-                false; // Can't be null unless tristate set to true, default is false
+            widget.state.globalSettings.setWarnings(false);
           }
         });
       },

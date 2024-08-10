@@ -34,7 +34,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   }
 
   void warnIfConnected(BuildContext context, void Function() onAccept) {
-    if (widget.state.globalSettings.warnings) {
+    if (widget.state.globalSettings.getWarnings()) {
       if (terminalState.connected) {
         return showWarningDialog(
             state: widget.state,

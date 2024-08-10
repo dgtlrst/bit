@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _CreateHomePageState extends State<HomePage> {
   Widget createTerminalGrid() {
-    Layout layout = widget.state.globalSettings.layout;
+    Layout layout = widget.state.globalSettings.getLayout();
     int num_of_terminals = 1;
     print(layout);
     List<Widget> terminals;

@@ -37,7 +37,7 @@ void showWarningDialog(
           TextButton(
             child: Text('Accept and never warn again! Placeholder!'),
             onPressed: () {
-              state.globalSettings.warnings = false;
+              state.globalSettings.setWarnings(false);
               onAccept();
               // Add your accept action here
               Navigator.of(context).pop();
