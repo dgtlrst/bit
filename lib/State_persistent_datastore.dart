@@ -25,13 +25,38 @@ class PersistentDataStore {
     return dataStore;
   }
 
-  saveGlobalWarnings(bool warnings) async {}
-  saveGlobalLayout(Layout layout) async {}
+  saveGlobalWarnings(bool warnings) {
+    // It saves when it saves
+    prefsWithCache.setBool("warnings", warnings);
+  }
+
+  saveGlobalLayout(Layout layout) {
+    // It saves when it saves
+    prefsWithCache.setString("layout", layout.toString());
+  }
+
   loadGlobalWarnings() {
-    return false;
+    bool warnings;
+    try {
+      warnings = prefsWithCache.getBool("warnings")!;
+      return warnings;
+    } catch (e) {
+      // Value does not exist! Or Type is wrong. Use default true.
+      warnings = true;
+      return warnings;
+    }
   }
 
   loadGlobalLayout() {
-    return Layout.oneByOne;
+    Layout layout;
+    try {
+      layout = prefsWithCache.get("layout")! as Layout;
+      return layout;
+    } catch (e) {
+      print(e);
+      // layout does not exist! Or Type is wrong. Or could not cast! Use default oneByOne.
+      layout = Layout.oneByOne;
+      return layout;
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bit/State_persistent_datastore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 enum Layout { oneByOne, oneByTwo, twoByOne, twoByTwo }
 
