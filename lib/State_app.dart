@@ -11,9 +11,11 @@ import 'package:bit/State_terminal.dart';
 
 class AppState {
   final HashMap<int, TerminalState> _threads = HashMap();
-  GlobalSettings globalSettings = GlobalSettings();
+  late GlobalSettings globalSettings;
   PersistentDataStore dataStore;
-  AppState._create({required this.dataStore});
+  AppState._create({required this.dataStore}) {
+    globalSettings = GlobalSettings(dataStore);
+  }
 
   /// Public factory
   static Future<AppState> create() async {

@@ -2,6 +2,8 @@ import 'package:bit/State_globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentDataStore {
+  // This is not guaranteed to persist to disk. This will persist on a best
+  // effort basis. For critical data use something else.
   late SharedPreferencesWithCache prefsWithCache;
   PersistentDataStore._create();
 
@@ -25,7 +27,11 @@ class PersistentDataStore {
 
   saveGlobalWarnings(bool warnings) async {}
   saveGlobalLayout(Layout layout) async {}
-  GlobalSettings loadGlobalSettings() {
-    throw Exception("Not implemented yet");
+  loadGlobalWarnings() {
+    return false;
+  }
+
+  loadGlobalLayout() {
+    return Layout.oneByOne;
   }
 }
