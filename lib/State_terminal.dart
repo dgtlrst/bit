@@ -9,7 +9,7 @@ class TerminalState {
   late TerminalController controller;
   Stream<String>? _stream;
   StreamSubscription<String>? _listener;
-  final SerialPortInfo settings = SerialPortInfo(
+  final SerialPortInfo _settings = SerialPortInfo(
       name: "",
       speed: 9600,
       dataBits: DataBits.eight,
@@ -65,4 +65,35 @@ class TerminalState {
       _rxData.add(data);
     };
   }
+
+  String getSettingsName() {
+    return _settings.name;
+  }
+
+  int getSettingsSpeed() {
+    return _settings.speed;
+  }
+
+  DataBits getSettingsDataBits() {
+    return _settings.dataBits;
+  }
+
+  Parity getSettingsParity() {
+    return _settings.parity;
+  }
+
+  StopBits getSettingsStopBits() {
+    return _settings.stopBits;
+  }
+
+  FlowControl getSettingsFlowControl() {
+    return _settings.flowControl;
+  }
+
+  void setSettingsName(String name) {}
+  void setSettingsSpeed(int speed) {}
+  void setSettingsDataBits(DataBits dataBit) {}
+  void setSettingsParity(Parity parity) {}
+  void setSettingsStopBits(StopBits stopBit) {}
+  void setSettingsFlowControl(FlowControl flowControl) {}
 }

@@ -30,7 +30,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   void initState() {
     super.initState();
     terminalState = widget.state.getTerminalState(widget.threadId)!;
-    _speed_controller.text = terminalState.settings.speed.toString();
+    _speed_controller.text = terminalState.getSettingsSpeed().toString();
   }
 
   void warnIfConnected(BuildContext context, void Function() onAccept) {
@@ -67,7 +67,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       return DropdownMenuItem<String>(value: v.name, child: Text(v.name));
     }).toList();
 
-    String _name = terminalState.settings.name;
+    String _name = terminalState.getSettingsName();
     try {
       _name = serialPortInfo[0].name;
     } on RangeError {
@@ -84,7 +84,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           warnIfConnected(context, () {
             setState(() {
               print("_name set to $name");
-              terminalState.settings.name = name!;
+              terminalState.setSettingsName(name!);
             });
           });
         });
@@ -92,9 +92,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Name"), name],
     );
 
-    int _speed = terminalState.settings.speed;
-    print(terminalState.settings.speed);
-
+    int _speed = terminalState.getSettingsSpeed();
     TextField speed;
     InputDecoration decoration;
     try {
@@ -122,7 +120,8 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           try {
             warnIfConnected(context, () {
               setState(() {
-                terminalState.settings.speed = int.parse(value);
+                var v = int.parse(value);
+                terminalState.setSettingsSpeed(v);
               });
             });
           } on FormatException {
@@ -135,7 +134,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Speed"), speed],
     );
 
-    DataBits _dataBits = terminalState.settings.dataBits;
+    DataBits _dataBits = terminalState.getSettingsDataBits();
     List<DropdownMenuItem<DataBits>> items = DataBits.values.map((v) {
       return DropdownMenuItem<DataBits>(value: v, child: Text(v.name));
     }).toList();
@@ -147,7 +146,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           print("_dataBits set to $dataBit");
           warnIfConnected(context, () {
             setState(() {
-              terminalState.settings.dataBits = dataBit!;
+              terminalState.setSettingsDataBits(dataBit!);
             });
           });
         });
@@ -155,7 +154,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Databit"), dataBits],
     );
 
-    StopBits _stopBit = terminalState.settings.stopBits;
+    StopBits _stopBit = terminalState.getSettingsStopBits();
     List<DropdownMenuItem<StopBits>> items11 = StopBits.values.map((v) {
       return DropdownMenuItem<StopBits>(value: v, child: Text(v.name));
     }).toList();
@@ -163,11 +162,11 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         hint: Text('Stop Bits'),
         value: _stopBit,
         items: items11,
-        onChanged: (stopbit) {
+        onChanged: (stopBit) {
           warnIfConnected(context, () {
             setState(() {
-              print("_stopbit set to $stopbit");
-              terminalState.settings.stopBits = stopbit!;
+              print("_stopbit set to $stopBit");
+              terminalState.setSettingsStopBits(stopBit!);
             });
           });
         });
@@ -176,7 +175,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [Text("Stopbit"), stopBit],
     );
 
-    Parity _parity = terminalState.settings.parity;
+    Parity _parity = terminalState.getSettingsParity();
 
     List<DropdownMenuItem<Parity>> items2 = Parity.values.map((v) {
       return DropdownMenuItem<Parity>(value: v, child: Text(v.name));
@@ -188,7 +187,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         onChanged: (parity) {
           warnIfConnected(context, () {
             setState(() {
-              terminalState.settings.parity = parity!;
+              terminalState.setSettingsParity(parity!);
             });
           });
         });
@@ -196,7 +195,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
     var par_group = Column(
       children: [Text("Parity"), parity],
     );
-    FlowControl _flowControl = terminalState.settings.flowControl;
+    FlowControl _flowControl = terminalState.getSettingsFlowControl();
     List<DropdownMenuItem<FlowControl>> items3 = FlowControl.values.map((v) {
       return DropdownMenuItem<FlowControl>(value: v, child: Text(v.name));
     }).toList();
@@ -204,10 +203,10 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         hint: Text('Flow Control'),
         value: _flowControl,
         items: items3,
-        onChanged: (flowcontrol) {
+        onChanged: (flowControl) {
           warnIfConnected(context, () {
             setState(() {
-              terminalState.settings.flowControl = flowcontrol!;
+              terminalState.setSettingsFlowControl(flowControl!);
             });
           });
         });
