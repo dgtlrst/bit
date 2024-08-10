@@ -90,10 +90,27 @@ class TerminalState {
     return _settings.flowControl;
   }
 
-  void setSettingsName(String name) {}
-  void setSettingsSpeed(int speed) {}
-  void setSettingsDataBits(DataBits dataBit) {}
-  void setSettingsParity(Parity parity) {}
-  void setSettingsStopBits(StopBits stopBit) {}
-  void setSettingsFlowControl(FlowControl flowControl) {}
+  void setSettingsName(String name) {
+    _settings.name = name;
+  }
+
+  void setSettingsSpeed(int speed) {
+    _settings.speed = speed;
+  }
+
+  void setSettingsDataBits(DataBits dataBit) {
+    _settings.dataBits = dataBit;
+  }
+
+  void setSettingsParity(Parity parity) {
+    _settings.parity = parity;
+  }
+
+  void setSettingsStopBits(StopBits stopBit) {
+    _settings.stopBits = stopBit;
+  }
+
+  void setSettingsFlowControl(FlowControl flowControl) {
+    _settings.flowControl = flowControl;
+  }
 }

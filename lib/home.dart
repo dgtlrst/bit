@@ -8,7 +8,6 @@ import 'package:bit/src/rust/frb_generated.dart';
 import 'package:bit/State_app.dart';
 import 'package:bit/terminal.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'sidepanel.dart'; // side panel
 
 class HomePage extends StatefulWidget {
