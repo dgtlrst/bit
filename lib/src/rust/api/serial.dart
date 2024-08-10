@@ -38,6 +38,9 @@ abstract class SerialPortInfo implements RustOpaqueInterface {
 
   set stopBits(StopBits stopBits);
 
+  static SerialPortInfo? fromJson({required String json}) =>
+      RustLib.instance.api.crateApiSerialSerialPortInfoFromJson(json: json);
+
   factory SerialPortInfo(
           {required String name,
           required int speed,
@@ -52,6 +55,8 @@ abstract class SerialPortInfo implements RustOpaqueInterface {
           parity: parity,
           stopBits: stopBits,
           flowControl: flowControl);
+
+  String? toJson();
 }
 
 enum DataBits {

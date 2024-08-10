@@ -1,8 +1,10 @@
 use crate::frb_generated::StreamSink;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
+use serde::{Deserialize, Serialize};
+use serde_json;
 use serialport::Error;
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub enum DataBits {
     Five = 5,
     Six = 6,
@@ -21,7 +23,7 @@ impl From<DataBits> for serialport::DataBits {
         }
     }
 }
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 
 pub enum Parity {
     None,
@@ -40,7 +42,7 @@ impl From<Parity> for serialport::Parity {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub enum StopBits {
     One,
     Two,
@@ -55,8 +57,7 @@ impl From<StopBits> for serialport::StopBits {
         }
     }
 }
-#[derive(Clone)]
-
+#[derive(Clone, Serialize, Deserialize)]
 pub enum FlowControl {
     None,
     Software,
@@ -75,6 +76,7 @@ impl From<FlowControl> for serialport::FlowControl {
 }
 
 #[flutter_rust_bridge::frb(opaque)]
+#[derive(Serialize, Deserialize)]
 pub struct SerialPortInfo {
     pub name: String,
     pub speed: u32,
@@ -102,6 +104,33 @@ impl SerialPortInfo {
             stop_bits,
             flow_control,
         }
+    }
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn from_json(json: String) -> Option<Self> {
+        let serial_port_info = serde_json::from_str(&json);
+        return match serial_port_info {
+            Ok(valid) => {
+                return Some(valid);
+            }
+            Err(e) => {
+                println!("{:?}", e);
+                None
+            }
+        };
+    }
+
+    #[flutter_rust_bridge::frb(sync)]
+    pub fn to_json(&self) -> Option<String> {
+        let serial_port_info_as_str = serde_json::to_string(&self);
+        return match serial_port_info_as_str {
+            Ok(valid) => {
+                return Some(valid);
+            }
+            Err(e) => {
+                println!("{:?}", e);
+                None
+            }
+        };
     }
 }
 
