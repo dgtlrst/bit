@@ -1,7 +1,19 @@
 import 'package:bit/State_persistent_datastore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-enum Layout { oneByOne, oneByTwo, twoByOne, twoByTwo }
+enum Layout {
+  oneByOne,
+  oneByTwo,
+  twoByOne,
+  twoByTwo;
+
+  static Layout fromString(String stringValue) {
+    return Layout.values.firstWhere(
+      (status) => status.name == stringValue,
+      orElse: () => throw ArgumentError('No matching Status for $stringValue'),
+    );
+  }
+}
 
 class GlobalSettings {
   final PersistentDataStore _dataStore;
@@ -19,9 +31,7 @@ class GlobalSettings {
   void setLayout(Layout layout) {
     _layout = layout;
     // Intentionally not awaiting, will save eventually
-    _dataStore.saveGlobalLayout(layout).catchError((e, s) {
-      print("Failed to save Layout!: ${e.toString()}");
-    });
+    _dataStore.saveGlobalLayout(layout);
   }
 
   bool getWarnings() {
@@ -31,8 +41,6 @@ class GlobalSettings {
   void setWarnings(bool warnings) {
     _warnings = warnings;
     // Intentionally not awaiting, will save eventually
-    _dataStore.saveGlobalWarnings(_warnings).catchError((e, s) {
-      print("Failed to save Warnings!: ${e.toString()}");
-    });
+    _dataStore.saveGlobalWarnings(_warnings);
   }
 }
