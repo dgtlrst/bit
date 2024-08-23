@@ -1,7 +1,6 @@
 import 'package:bit/state_app.dart';
 import 'package:flutter/material.dart';
-
-import 'settings.dart'; // settings
+import 'settings.dart';
 
 enum SidePanelPage {
   home,

@@ -3,6 +3,7 @@ import 'package:bit/state_app.dart';
 import 'package:bit/terminal_io_tab.dart';
 import 'package:bit/terminal_settings_tab.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class Terminal extends StatefulWidget {
   final AppState state;
@@ -19,7 +20,7 @@ class _CreateTerminalState extends State<Terminal>
   @override
   void initState() {
     super.initState();
-    print("Creating Terminal with TerminalState threadId: ${widget.threadId}");
+    log("Creating Terminal with TerminalState threadId: ${widget.threadId}");
     terminalState = widget.state.getThreadAndCreateIfNotExist(widget.threadId);
     _tabController = TabController(length: 2, vsync: this);
   }

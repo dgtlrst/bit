@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:bit/state_globals.dart';
 import 'package:bit/state_persistent_datastore.dart';
 import 'package:bit/state_terminal.dart';
+import 'dart:developer';
 
 // This class owns all streams and connectors and other data for the UI
 // so that the data can be continously updated without necessarily rebuilding the
@@ -46,7 +47,7 @@ class AppState {
     if (thread != null) {
       thread.disconnectIfNotDisconnected();
     } else {
-      print("Terminal with Id: $threadId does not exist");
+      log("Terminal with Id: $threadId does not exist");
     }
     _threads.remove(threadId);
   }

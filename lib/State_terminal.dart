@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bit/state_persistent_datastore.dart';
 import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/src/rust/api/serial.dart';
+import 'dart:developer';
 
 class TerminalState {
   final PersistentDataStore dataStore;
@@ -21,7 +22,7 @@ class TerminalState {
 
   void connectIfNotConnected() {
     if (!connected) {
-      print("Thread $threadId: Connecting");
+      log("Thread $threadId: Connecting");
       _stream = controller.createStream().asBroadcastStream();
       _listener = _stream!.listen(
           streamHandler()); // Stream should exist since we just created the stream
@@ -31,7 +32,7 @@ class TerminalState {
 
   void disconnectIfNotDisconnected() {
     if (connected) {
-      print("Thread $threadId: Disconnecting");
+      log("Thread $threadId: Disconnecting");
       controller.endStream();
       if (_listener != null) {
         _listener!.cancel();
@@ -43,7 +44,7 @@ class TerminalState {
   }
 
   void push(String data) {
-    print("Thread $threadId: Sending to Rust: '$data'");
+    log("Thread $threadId: Sending to Rust: '$data'");
     controller.push(data: data);
   }
 
@@ -58,7 +59,7 @@ class TerminalState {
 
   void Function(String) streamHandler() {
     return (String data) {
-      print("Thread $threadId: Receving '$data'");
+      log("Thread $threadId: Receving '$data'");
       _rxData.add(data);
     };
   }

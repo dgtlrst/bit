@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bit/state_terminal.dart';
 import 'package:flutter/material.dart';
 import 'package:bit/state_app.dart';
+import 'dart:developer';
 
 class TerminalIOTab extends StatefulWidget {
   final int threadId;
@@ -32,7 +33,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     if (terminalState.connected) {
       connect();
     }
-    print("Thread Id in Dart: ${widget.threadId}");
+    log("Thread Id in Dart: ${widget.threadId}");
   }
 
   @override
@@ -67,8 +68,8 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
         // whether the widget is getting rendered without setState to
         // decouple data gathering from rendering.
         setState(() {});
-        print("Length of _data: ${_data.length}");
-        print("Receiving Data in Stream: $data");
+        log("Length of _data: ${_data.length}");
+        log("Receiving Data in Stream: $data");
       }
     };
   }

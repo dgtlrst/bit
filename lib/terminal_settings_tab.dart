@@ -4,6 +4,7 @@ import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/state_app.dart';
 import 'package:bit/warning_dialogue.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class SettingsTab extends StatefulWidget {
   final int threadId;
@@ -87,7 +88,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       name = serialPortInfoList[0].name;
       return name;
     } on RangeError {
-      print("No valid ports available."); // debug log here instead
+      log("No valid ports available."); // debug log here instead
       name = "N/A";
       return name;
     }
@@ -96,7 +97,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   void _onChangedHandlerSpeed(String value) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 250), () {
-      print("onEditingComplete Triggered: $value");
+      log("onEditingComplete Triggered: $value");
       try {
         warnIfConnected(context, () {
           setState(() {
@@ -106,7 +107,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         });
       } on FormatException {
         setState(() {});
-        print("Invalid Speed");
+        log("Invalid Speed");
       }
     });
   }
@@ -126,7 +127,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         onChanged: (name) {
           warnIfConnected(context, () {
             setState(() {
-              print("_name set to $name");
+              log("_name set to $name");
               terminalState.setSettingsName(name!);
             });
           });
@@ -135,11 +136,11 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [const Text("Name"), name],
     );
 
-    int _speed = terminalState.getSettingsSpeed();
-    TextField speed;
+    int speed = terminalState.getSettingsSpeed();
+    TextField speedTextField;
     InputDecoration decoration;
     try {
-      _speed = int.parse(_speedController.text);
+      speed = int.parse(_speedController.text);
       decoration = const InputDecoration(
         border: OutlineInputBorder(),
         labelText: 'Speed', // Set the error text color
@@ -154,7 +155,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       );
     }
 
-    speed = TextField(
+    speedTextField = TextField(
         controller: _speedController,
         // onChanged: (String value) {
         //   setState(() {});
@@ -166,7 +167,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         decoration: decoration);
 
     var speedGroup = Column(
-      children: [const Text("Speed"), speed],
+      children: [const Text("Speed"), speedTextField],
     );
 
     DataBits dataBitsInput = terminalState.getSettingsDataBits();
@@ -178,7 +179,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         value: dataBitsInput,
         items: items,
         onChanged: (dataBit) {
-          print("_dataBits set to $dataBit");
+          log("_dataBits set to $dataBit");
           warnIfConnected(context, () {
             setState(() {
               terminalState.setSettingsDataBits(dataBit!);
@@ -189,18 +190,18 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [const Text("Databit"), dataBits],
     );
 
-    StopBits _stopBit = terminalState.getSettingsStopBits();
+    StopBits stopBitStr = terminalState.getSettingsStopBits();
     List<DropdownMenuItem<StopBits>> items11 = StopBits.values.map((v) {
       return DropdownMenuItem<StopBits>(value: v, child: Text(v.name));
     }).toList();
     var stopBit = DropdownButton(
         hint: const Text('Stop Bits'),
-        value: _stopBit,
+        value: stopBitStr,
         items: items11,
         onChanged: (stopBit) {
           warnIfConnected(context, () {
             setState(() {
-              print("_stopbit set to $stopBit");
+              log("_stopbit set to $stopBit");
               terminalState.setSettingsStopBits(stopBit!);
             });
           });
@@ -210,14 +211,14 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       children: [const Text("Stopbit"), stopBit],
     );
 
-    Parity _parity = terminalState.getSettingsParity();
+    Parity parity = terminalState.getSettingsParity();
 
     List<DropdownMenuItem<Parity>> items2 = Parity.values.map((v) {
       return DropdownMenuItem<Parity>(value: v, child: Text(v.name));
     }).toList();
-    var parity = DropdownButton(
+    var parityBtn = DropdownButton(
         hint: const Text('Parity'),
-        value: _parity,
+        value: parity,
         items: items2,
         onChanged: (parity) {
           warnIfConnected(context, () {
@@ -228,15 +229,15 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         });
 
     var parGroup = Column(
-      children: [const Text("Parity"), parity],
+      children: [const Text("Parity"), parityBtn],
     );
-    FlowControl _flowControl = terminalState.getSettingsFlowControl();
+    FlowControl flowControl = terminalState.getSettingsFlowControl();
     List<DropdownMenuItem<FlowControl>> items3 = FlowControl.values.map((v) {
       return DropdownMenuItem<FlowControl>(value: v, child: Text(v.name));
     }).toList();
-    var flowControl = DropdownButton(
+    var flowControlBtn = DropdownButton(
         hint: const Text('Flow Control'),
-        value: _flowControl,
+        value: flowControl,
         items: items3,
         onChanged: (flowControl) {
           warnIfConnected(context, () {
@@ -247,22 +248,21 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         });
 
     var flowGroup = Column(
-      children: [const Text("Flow Control"), flowControl],
+      children: [const Text("Flow Control"), flowControlBtn],
     );
 
     var btn = ElevatedButton(
         onPressed: () {
           var s = SerialPortInfo(
               name: nameStr,
-              speed: _speed,
+              speed: speed,
               dataBits: dataBitsInput,
-              parity: _parity,
-              stopBits: _stopBit,
-              flowControl: _flowControl);
-          print(
-              "${s.name}, ${s.speed}, ${s.dataBits}, ${s.parity}, ${s.stopBits}, ${s.flowControl}");
+              parity: parity,
+              stopBits: stopBitStr,
+              flowControl: flowControl);
+          log("${s.name}, ${s.speed}, ${s.dataBits}, ${s.parity}, ${s.stopBits}, ${s.flowControl}");
         },
-        child: const Text("Print Port Information"));
+        child: const Text("log Port Information"));
 
     var grid = GridView.count(
       padding: const EdgeInsets.all(20),
