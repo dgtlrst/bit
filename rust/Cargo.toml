@@ -1,0 +1,16 @@
+[package]
+name = "rust_lib_bit"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+anyhow = "1.0.86"
+flutter_rust_bridge = "=2.3.0"
+rand = "0.8.5"
+serde = { version = "1.0.205", features = ["derive"] }
+serde_json = "1.0.122"
+serialport = "4.4.0"
+
