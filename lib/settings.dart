@@ -15,8 +15,8 @@ class _CreateSettingsState extends State<Settings> {
     List<DropdownMenuItem<Layout>> layouts = Layout.values.map((v) {
       return DropdownMenuItem<Layout>(value: v, child: Text(v.name));
     }).toList();
-    var layout_btn = DropdownButton(
-        hint: Text('Layout'),
+    var layoutBtn = DropdownButton(
+        hint: const Text('Layout'),
         value: widget.state.globalSettings.getLayout(),
         items: layouts,
         onChanged: (value) {
@@ -25,7 +25,7 @@ class _CreateSettingsState extends State<Settings> {
           });
         });
 
-    Column layout_group = Column(
+    Column layoutGroup = Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Center(
@@ -37,14 +37,14 @@ class _CreateSettingsState extends State<Settings> {
                 child: Icon(Icons.info_outline))
           ]),
         ),
-        layout_btn
+        layoutBtn
       ],
     );
-    return layout_group;
+    return layoutGroup;
   }
 
   Column enableTerminalWarningsTickBox() {
-    var title = Text("Enable Terminal Warnings");
+    var title = const Text("Enable Terminal Warnings");
     var tickbox = Checkbox.adaptive(
       value: widget.state.globalSettings.getWarnings(),
       onChanged: (value) {

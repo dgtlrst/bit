@@ -18,8 +18,9 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _CreateSettingsTabState extends State<SettingsTab> {
-  String _name_setting_element = "Port Name";
-  TextEditingController _speed_controller = TextEditingController(text: "9600");
+  String _nameSettingElement = "Port Name";
+  final TextEditingController _speedController =
+      TextEditingController(text: "9600");
   late TerminalState terminalState;
   Timer? _debounce;
 
@@ -27,12 +28,12 @@ class _CreateSettingsTabState extends State<SettingsTab> {
   void initState() {
     super.initState();
     terminalState = widget.state.getTerminalState(widget.threadId)!;
-    _speed_controller.text = terminalState.getSettingsSpeed().toString();
+    _speedController.text = terminalState.getSettingsSpeed().toString();
   }
 
   @override
   void dispose() {
-    _speed_controller.dispose();
+    _speedController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -71,30 +72,30 @@ class _CreateSettingsTabState extends State<SettingsTab> {
 
   String validateSerialPortInfoName(List<SerialPortInfo> serialPortInfoList) {
     // The name loaded from disk may no longer be connected so we need to check that
-    String _name = terminalState.getSettingsName();
+    String name = terminalState.getSettingsName();
     // If name from disk still exists on device then we choose that so it "remembers"
     // which com port it was on. It cannot remember the device name for obvious reasons.
     // So if the user moves that around or the OS reassigns names on startup there
     // is nothing we can do about that.
     for (SerialPortInfo serialPortInfo in serialPortInfoList) {
-      if (_name == serialPortInfo.name) {
-        return _name;
+      if (name == serialPortInfo.name) {
+        return name;
       }
     }
     // If name from disk does not exist.
     try {
-      _name = serialPortInfoList[0].name;
-      return _name;
+      name = serialPortInfoList[0].name;
+      return name;
     } on RangeError {
       print("No valid ports available."); // debug log here instead
-      _name = "N/A";
-      return _name;
+      name = "N/A";
+      return name;
     }
   }
 
   void _onChangedHandlerSpeed(String value) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(Duration(milliseconds: 250), () {
+    _debounce = Timer(const Duration(milliseconds: 250), () {
       print("onEditingComplete Triggered: $value");
       try {
         warnIfConnected(context, () {
@@ -116,12 +117,12 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       return DropdownMenuItem<String>(value: v.name, child: Text(v.name));
     }).toList();
 
-    _name_setting_element = "No Ports";
-    String _name = validateSerialPortInfoName(serialPortInfo);
+    _nameSettingElement = "No Ports";
+    String nameStr = validateSerialPortInfoName(serialPortInfo);
     var name = DropdownButton(
-        value: _name,
+        value: nameStr,
         items: items9,
-        hint: Text(_name_setting_element),
+        hint: Text(_nameSettingElement),
         onChanged: (name) {
           warnIfConnected(context, () {
             setState(() {
@@ -130,15 +131,15 @@ class _CreateSettingsTabState extends State<SettingsTab> {
             });
           });
         });
-    var name_group = Column(
-      children: [Text("Name"), name],
+    var nameGroup = Column(
+      children: [const Text("Name"), name],
     );
 
     int _speed = terminalState.getSettingsSpeed();
     TextField speed;
     InputDecoration decoration;
     try {
-      _speed = int.parse(_speed_controller.text);
+      _speed = int.parse(_speedController.text);
       decoration = const InputDecoration(
         border: OutlineInputBorder(),
         labelText: 'Speed', // Set the error text color
@@ -154,7 +155,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
     }
 
     speed = TextField(
-        controller: _speed_controller,
+        controller: _speedController,
         // onChanged: (String value) {
         //   setState(() {});
         // },
@@ -164,17 +165,17 @@ class _CreateSettingsTabState extends State<SettingsTab> {
         },
         decoration: decoration);
 
-    var speed_group = Column(
-      children: [Text("Speed"), speed],
+    var speedGroup = Column(
+      children: [const Text("Speed"), speed],
     );
 
-    DataBits _dataBits = terminalState.getSettingsDataBits();
+    DataBits dataBitsInput = terminalState.getSettingsDataBits();
     List<DropdownMenuItem<DataBits>> items = DataBits.values.map((v) {
       return DropdownMenuItem<DataBits>(value: v, child: Text(v.name));
     }).toList();
     var dataBits = DropdownButton(
-        hint: Text('Data Bits'),
-        value: _dataBits,
+        hint: const Text('Data Bits'),
+        value: dataBitsInput,
         items: items,
         onChanged: (dataBit) {
           print("_dataBits set to $dataBit");
@@ -184,8 +185,8 @@ class _CreateSettingsTabState extends State<SettingsTab> {
             });
           });
         });
-    var data_group = Column(
-      children: [Text("Databit"), dataBits],
+    var dataGroup = Column(
+      children: [const Text("Databit"), dataBits],
     );
 
     StopBits _stopBit = terminalState.getSettingsStopBits();
@@ -193,7 +194,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       return DropdownMenuItem<StopBits>(value: v, child: Text(v.name));
     }).toList();
     var stopBit = DropdownButton(
-        hint: Text('Stop Bits'),
+        hint: const Text('Stop Bits'),
         value: _stopBit,
         items: items11,
         onChanged: (stopBit) {
@@ -205,8 +206,8 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           });
         });
 
-    var stop_group = Column(
-      children: [Text("Stopbit"), stopBit],
+    var stopGroup = Column(
+      children: [const Text("Stopbit"), stopBit],
     );
 
     Parity _parity = terminalState.getSettingsParity();
@@ -215,7 +216,7 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       return DropdownMenuItem<Parity>(value: v, child: Text(v.name));
     }).toList();
     var parity = DropdownButton(
-        hint: Text('Parity'),
+        hint: const Text('Parity'),
         value: _parity,
         items: items2,
         onChanged: (parity) {
@@ -226,15 +227,15 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           });
         });
 
-    var par_group = Column(
-      children: [Text("Parity"), parity],
+    var parGroup = Column(
+      children: [const Text("Parity"), parity],
     );
     FlowControl _flowControl = terminalState.getSettingsFlowControl();
     List<DropdownMenuItem<FlowControl>> items3 = FlowControl.values.map((v) {
       return DropdownMenuItem<FlowControl>(value: v, child: Text(v.name));
     }).toList();
     var flowControl = DropdownButton(
-        hint: Text('Flow Control'),
+        hint: const Text('Flow Control'),
         value: _flowControl,
         items: items3,
         onChanged: (flowControl) {
@@ -245,23 +246,23 @@ class _CreateSettingsTabState extends State<SettingsTab> {
           });
         });
 
-    var flow_group = Column(
-      children: [Text("Flow Control"), flowControl],
+    var flowGroup = Column(
+      children: [const Text("Flow Control"), flowControl],
     );
 
     var btn = ElevatedButton(
         onPressed: () {
           var s = SerialPortInfo(
-              name: _name,
+              name: nameStr,
               speed: _speed,
-              dataBits: _dataBits,
+              dataBits: dataBitsInput,
               parity: _parity,
               stopBits: _stopBit,
               flowControl: _flowControl);
           print(
               "${s.name}, ${s.speed}, ${s.dataBits}, ${s.parity}, ${s.stopBits}, ${s.flowControl}");
         },
-        child: Text("Print Port Information"));
+        child: const Text("Print Port Information"));
 
     var grid = GridView.count(
       padding: const EdgeInsets.all(20),
@@ -270,12 +271,12 @@ class _CreateSettingsTabState extends State<SettingsTab> {
       crossAxisSpacing: 20, // Adjust horizontal spacing
       crossAxisCount: 2,
       children: [
-        name_group,
-        speed_group,
-        data_group,
-        par_group,
-        stop_group,
-        flow_group,
+        nameGroup,
+        speedGroup,
+        dataGroup,
+        parGroup,
+        stopGroup,
+        flowGroup,
         btn
       ],
     );

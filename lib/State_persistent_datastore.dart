@@ -71,7 +71,6 @@ class PersistentDataStore {
 
   Layout loadGlobalLayout() {
     Layout defaultLayout = Layout.oneByOne;
-    Layout? layout;
     try {
       String? result = _prefsWithCache.getString("layout");
       if (result == null) {

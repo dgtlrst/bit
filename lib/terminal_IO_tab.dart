@@ -78,7 +78,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     _controller.clear();
   }
 
-  Widget create_output() {
+  Widget createOutput() {
     List<Widget> widgets = _data.map((e) {
       return Text(e);
     }).toList();
@@ -90,18 +90,18 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
     ));
   }
 
-  Widget connect_disconnect_binary() {
+  Widget connectDisconnectBinary() {
     if (terminalState.connected) {
       return Padding(
         padding: const EdgeInsets.all(5),
         child: IconButton.filled(
-            onPressed: () => disconnect(), icon: Icon(Icons.power_off)),
+            onPressed: () => disconnect(), icon: const Icon(Icons.power_off)),
       );
     } else {
       return Padding(
         padding: const EdgeInsets.all(5),
         child: IconButton.filled(
-            onPressed: () => connect(), icon: Icon(Icons.power)),
+            onPressed: () => connect(), icon: const Icon(Icons.power)),
       );
     }
   }
@@ -112,8 +112,6 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
         Color(0xFF26303B); // TextField background color
     const Color textFieldTextColor =
         Color.fromARGB(255, 96, 135, 142); // TextField text color
-    const Color mainTextColor =
-        Color.fromARGB(255, 111, 159, 169); // Main content text color
     return Container(
       margin: const EdgeInsets.all(15.0),
       padding: const EdgeInsets.all(3.0),
@@ -122,7 +120,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
       ),
       child: Column(
         children: [
-          create_output(),
+          createOutput(),
           Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -144,7 +142,7 @@ class _CreateTerminalIOTabState extends State<TerminalIOTab>
                       labelStyle: TextStyle(color: textFieldTextColor),
                     ),
                   )),
-                  connect_disconnect_binary()
+                  connectDisconnectBinary()
                 ],
               ))
         ],
