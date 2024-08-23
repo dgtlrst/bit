@@ -1,12 +1,7 @@
-import 'dart:ffi';
-
-import 'package:bit/State_globals.dart';
-import 'package:bit/src/rust/api/serial.dart';
-import 'package:bit/State_app.dart';
+import 'package:bit/state_globals.dart';
+import 'package:bit/state_app.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import 'sidepanel.dart'; // side panel
+import 'sidepanel.dart';
 
 class Settings extends StatefulWidget {
   final AppState state;

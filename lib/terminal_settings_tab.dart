@@ -1,14 +1,9 @@
 import 'dart:async';
-import 'dart:ffi';
-
-import 'package:bit/State_terminal.dart';
+import 'package:bit/state_terminal.dart';
 import 'package:bit/src/rust/api/serial.dart';
-import 'package:bit/State_app.dart';
+import 'package:bit/state_app.dart';
 import 'package:bit/warning_dialogue.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import 'sidepanel.dart'; // side panel
 
 class SettingsTab extends StatefulWidget {
   final int threadId;
@@ -289,13 +284,6 @@ class _CreateSettingsTabState extends State<SettingsTab> {
 
   @override
   Widget build(BuildContext context) {
-    // define app colors
-    const Color textFieldColor = Color.fromARGB(
-        255, 23, 29, 35); // Slightly darker TextField background color
-    const Color textFieldTextColor = Color.fromARGB(
-        255, 200, 220, 224); // Slightly different TextField text color
-    const Color mainTextColor = Color.fromARGB(
-        255, 144, 168, 174); // Slightly different Main content text color
     return Column(
       children: [
         Expanded(

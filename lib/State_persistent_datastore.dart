@@ -1,5 +1,5 @@
-import 'package:bit/State_globals.dart';
 import 'package:bit/src/rust/api/serial.dart';
+import 'package:bit/state_globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PersistentDataStore {

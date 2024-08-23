@@ -5,9 +5,9 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:bit/State_globals.dart';
-import 'package:bit/State_persistent_datastore.dart';
-import 'package:bit/State_terminal.dart';
+import 'package:bit/state_globals.dart';
+import 'package:bit/state_persistent_datastore.dart';
+import 'package:bit/state_terminal.dart';
 
 class AppState {
   final HashMap<int, TerminalState> _threads = HashMap();

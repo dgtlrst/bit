@@ -1,4 +1,4 @@
-import 'package:bit/State_persistent_datastore.dart';
+import 'package:bit/state_persistent_datastore.dart';
 
 enum Layout {
   oneByOne,

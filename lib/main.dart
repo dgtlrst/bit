@@ -1,9 +1,7 @@
-import 'package:bit/src/rust/api/serial.dart';
-import 'package:bit/State_app.dart';
+import 'package:bit/state_app.dart';
 import 'package:flutter/material.dart';
 import 'package:bit/src/rust/frb_generated.dart';
-
-import 'home.dart'; // home
+import 'home.dart';
 
 Future<void> main() async {
   await RustLib.init();

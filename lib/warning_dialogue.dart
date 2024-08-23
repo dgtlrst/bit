@@ -1,4 +1,4 @@
-import 'package:bit/State_app.dart';
+import 'package:bit/state_app.dart';
 import 'package:flutter/material.dart';
 
 void showWarningDialog(
@@ -11,23 +11,23 @@ void showWarningDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Warning'),
+        title: const Text('Warning'),
         content: Column(
           children: [
             Text(explanation),
-            Text('Are you sure you want to proceed?')
+            const Text('Are you sure you want to proceed?')
           ],
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
             onPressed: () {
               onCancel();
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('Accept'),
+            child: const Text('Accept'),
             onPressed: () {
               onAccept();
               // Add your accept action here
@@ -35,7 +35,7 @@ void showWarningDialog(
             },
           ),
           TextButton(
-            child: Text('Accept and never warn again! Placeholder!'),
+            child: const Text('Accept and never warn again! Placeholder!'),
             onPressed: () {
               state.globalSettings.setWarnings(false);
               onAccept();

@@ -1,15 +1,8 @@
-import 'dart:async';
-
-import 'package:bit/State_terminal.dart';
-import 'package:bit/src/rust/api/controller.dart';
-import 'package:bit/src/rust/api/serial.dart';
-import 'package:bit/src/rust/frb_generated.dart';
-import 'package:bit/State_app.dart';
-import 'package:bit/terminal_IO_tab.dart';
+import 'package:bit/state_terminal.dart';
+import 'package:bit/state_app.dart';
+import 'package:bit/terminal_io_tab.dart';
 import 'package:bit/terminal_settings_tab.dart';
 import 'package:flutter/material.dart';
-
-import 'sidepanel.dart'; // side panel
 
 class Terminal extends StatefulWidget {
   final AppState state;
