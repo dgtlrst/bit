@@ -40,7 +40,6 @@ class PersistentDataStore {
     _prefsWithCache.setBool("warnings", warnings).catchError((e, s) {
       log("Failed to save Warnings!: ${e.toString()}");
     });
-    ;
   }
 
   void saveGlobalLayout(Layout layout) {
