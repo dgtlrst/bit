@@ -2,8 +2,8 @@ use std::sync::{Arc, Mutex};
 use std::{thread, time::Duration};
 
 use crate::frb_generated::StreamSink;
+use ::bitcore::serial_types::{DataBits, FlowControl, Parity, SerialPortInfo, StopBits};
 use anyhow::{anyhow, Ok, Result};
-// use serialport::SerialPortInfo;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread::JoinHandle;
 
@@ -31,14 +31,14 @@ impl TerminalRunner {
         let serial_port_info: SerialPortInfo = SerialPortInfo::new(
             "COM1".to_string(),
             9600,
-            bitcore::DataBits::Eight,
-            bitcore::Parity::None,
-            bitcore::StopBits::One,
-            bitcore::FlowControl::None,
+            DataBits::Eight,
+            Parity::None,
+            StopBits::One,
+            FlowControl::None,
         );
 
         // open connection
-        bitcore::connect(&connection, serial_port_info.name, serial_port_info.speed)
+        bitcore::connect(&connection, &serial_port_info.name, serial_port_info.speed)
             .expect("Failed to connect to serial port");
 
         // send data
@@ -51,7 +51,7 @@ impl TerminalRunner {
             .expect("Failed to read data from serial port");
 
         // verify response
-        let data = String::from_utf8_lossy(&read_buf[..bytes_read]);
+        let data = String::from_utf8_lossy(&read_buf[..read_data]);
         println!("Received data: {}", data);
 
         // verify data
@@ -63,7 +63,10 @@ impl TerminalRunner {
         // close connection
         bitcore::disconnect(&connection).expect("Failed to disconnect from serial port");
 
-        self.stream.add(data.to_string());
+        let r = self
+            .stream
+            .add(format!("Thread Id: {:?}: Data: {:?}", self.thread_id, data));
+        r.expect("Should work");
     }
 
     fn test_main(&self) {
@@ -137,7 +140,7 @@ impl TerminalController {
         let thread_closure =
             move |thread_id: u32, stream_sink: StreamSink<String>, rx: Receiver<String>| {
                 let thread_controller = TerminalRunner::new(thread_id, stream_sink, rx);
-                thread_controller.main();
+                thread_controller.main_integration_bitcore();
             };
         let (tx, rx) = mpsc::channel();
         let thread_id = self.thread_id;
