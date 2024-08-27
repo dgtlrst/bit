@@ -5,9 +5,13 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'serial.dart';
 
 // These functions are ignored because they are not marked as `pub`: `main_integration_bitcore`, `new`, `test_main`
 // These types are ignored because they are not used by any `pub` functions: `TerminalRunner`
+
+List<SerialPortInfo> listAvailablePorts() =>
+    RustLib.instance.api.crateApiControllerListAvailablePorts();
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<TerminalController>>
 abstract class TerminalController implements RustOpaqueInterface {

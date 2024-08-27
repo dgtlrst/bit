@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bit/state_persistent_datastore.dart';
 import 'package:bit/src/rust/api/controller.dart';
-import 'package:bit/src/rust/api/serial.dart';
 import 'dart:developer';
 
 class TerminalState {

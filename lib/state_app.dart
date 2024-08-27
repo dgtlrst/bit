@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:bit/state_globals.dart';
-import 'package:bit/state_persistent_datastore.dart';
-import 'package:bit/state_terminal.dart';
 import 'dart:developer';
+
+import 'state_globals.dart';
+import 'state_persistent_datastore.dart';
+import 'state_terminal.dart';
 
 // This class owns all streams and connectors and other data for the UI
 // so that the data can be continously updated without necessarily rebuilding the

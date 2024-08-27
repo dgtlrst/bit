@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+
 import 'package:bit/state_globals.dart';
 import 'package:bit/state_app.dart';
 import 'package:bit/terminal_wrapper.dart';
-import 'package:flutter/material.dart';
 import 'sidepanel.dart'; // side panel
 
 class HomePage extends StatefulWidget {

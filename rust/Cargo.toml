@@ -13,3 +13,4 @@ rand = "0.8.5"
 serde = { version = "1.0.205", features = ["derive"] }
 serde_json = "1.0.122"
 bitcore ={ version = "0.1.0", git = "https://github.com/dgtlrst/bitcore" }
+serialport = "4.5.0"

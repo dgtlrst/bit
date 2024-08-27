@@ -1,14 +1,35 @@
+use super::*;
+use crate::frb_generated::StreamSink;
+use anyhow::Error;
+use anyhow::{anyhow, Ok, Result};
+use bitcore::api as bitcore;
+use serialport::{SerialPortBuilder, SerialPortInfo as SInfo};
+use std::io;
+use std::sync::mpsc::{self, Receiver, Sender};
 use std::sync::{Arc, Mutex};
+use std::thread::JoinHandle;
 use std::{thread, time::Duration};
 
-use crate::frb_generated::StreamSink;
-use ::bitcore::serial_types::{DataBits, FlowControl, Parity, SerialPortInfo, StopBits};
-use anyhow::{anyhow, Ok, Result};
-use std::sync::mpsc::{self, Receiver, Sender};
-use std::thread::JoinHandle;
+#[flutter_rust_bridge::frb(sync)] // For now to make things easier
+pub fn list_available_ports() -> Result<Vec<SerialPortInfo>, Error> {
+    let ports = serialport::available_ports()?;
+    let mut serial_ports = Vec::new();
 
-use bitcore::api as bitcore;
+    for port in ports {
+        let serial_port = SerialPortInfo::new(
+            port.port_name,
+            9600,
+            DataBits::from(DataBits::Eight),
+            Parity::from(Parity::None),
+            StopBits::from(StopBits::One),
+            FlowControl::from(FlowControl::None),
+        );
 
+        serial_ports.push(serial_port);
+    }
+
+    Ok(serial_ports)
+}
 struct TerminalRunner {
     thread_id: u32,
     stream: StreamSink<String>,
@@ -36,10 +57,11 @@ impl TerminalRunner {
             StopBits::One,
             FlowControl::None,
         );
-
+        let speed = serial_port_info.speed;
+        let name = serial_port_info.name.clone();
+        let sinfo: SerialPortBuilder = serial_port_info.into();
         // open connection
-        bitcore::connect(&connection, &serial_port_info.name, serial_port_info.speed)
-            .expect("Failed to connect to serial port");
+        bitcore::connect(&connection, &name, speed).expect("Failed to connect to serial port");
 
         // send data
         let write_data = b"TBRUPTIME\r\n";
