@@ -1,15 +1,36 @@
-use std::collections::HashMap;
-use std::sync::Mutex;
+use super::*;
+use crate::api::serial::SerialPortInfo;
+use crate::frb_generated::StreamSink;
+use anyhow::Error;
+use anyhow::{anyhow, Ok, Result};
+use bitcore::api as bitcore;
+use serialport::{SerialPortBuilder, SerialPortInfo as SInfo};
+use std::io;
+use std::sync::mpsc::{self, Receiver, Sender};
+use std::sync::{Arc, Mutex};
+use std::thread::JoinHandle;
 use std::{thread, time::Duration};
 
-use crate::frb_generated::StreamSink;
-use anyhow::{anyhow, bail, Ok, Result};
-use flutter_rust_bridge::frb;
-use rand::prelude::*;
-use serialport::Error;
-use std::sync::mpsc::{self, Receiver, Sender};
-use std::thread::JoinHandle;
+#[flutter_rust_bridge::frb(sync)] // For now to make things easier
+pub fn list_available_ports() -> Result<Vec<SerialPortInfo>, Error> {
+    let ports = serialport::available_ports()?;
+    let mut serial_ports = Vec::new();
 
+    for port in ports {
+        let serial_port = SerialPortInfo::new(
+            port.port_name,
+            9600,
+            DataBits::from(DataBits::Eight),
+            Parity::from(Parity::None),
+            StopBits::from(StopBits::One),
+            FlowControl::from(FlowControl::None),
+        );
+
+        serial_ports.push(serial_port);
+    }
+
+    Ok(serial_ports)
+}
 struct TerminalRunner {
     thread_id: u32,
     stream: StreamSink<String>,
@@ -24,7 +45,54 @@ impl TerminalRunner {
         }
     }
 
-    fn main(&self) {
+    fn main_integration_bitcore(&self) {
+        // define shared connection
+        let connection: bitcore::SharedConnection = Arc::new(Mutex::new(None));
+
+        // here we can take a SerialPortInfo
+        let serial_port_info: SerialPortInfo = SerialPortInfo::new(
+            "COM1".to_string(),
+            9600,
+            DataBits::Eight,
+            Parity::None,
+            StopBits::One,
+            FlowControl::None,
+        );
+        let speed = serial_port_info.speed;
+        let name = serial_port_info.name.clone();
+        let sinfo: SerialPortBuilder = serial_port_info.into();
+        // open connection
+        bitcore::connect(&connection, &name, speed).expect("Failed to connect to serial port");
+
+        // send data
+        let write_data = b"TBRUPTIME\r\n";
+        bitcore::write(&connection, write_data).expect("Failed to write data to serial port");
+
+        // read data
+        let mut read_buf = vec![0; 64];
+        let read_data = bitcore::read(&connection, &mut read_buf, Duration::from_millis(1000))
+            .expect("Failed to read data from serial port");
+
+        // verify response
+        let data = String::from_utf8_lossy(&read_buf[..read_data]);
+        println!("Received data: {}", data);
+
+        // verify data
+        match data.contains("read uptime request") {
+            true => println!("Data verified"),
+            false => println!("Data not verified"),
+        }
+
+        // close connection
+        bitcore::disconnect(&connection).expect("Failed to disconnect from serial port");
+
+        let r = self
+            .stream
+            .add(format!("Thread Id: {:?}: Data: {:?}", self.thread_id, data));
+        r.expect("Should work");
+    }
+
+    fn test_main(&self) {
         let start = std::time::Instant::now();
         let mut count = 0;
         loop {
@@ -95,7 +163,7 @@ impl TerminalController {
         let thread_closure =
             move |thread_id: u32, stream_sink: StreamSink<String>, rx: Receiver<String>| {
                 let thread_controller = TerminalRunner::new(thread_id, stream_sink, rx);
-                thread_controller.main();
+                thread_controller.main_integration_bitcore();
             };
         let (tx, rx) = mpsc::channel();
         let thread_id = self.thread_id;

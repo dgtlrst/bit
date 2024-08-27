@@ -1,8 +1,6 @@
-use crate::frb_generated::StreamSink;
-use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json;
-use serialport::Error;
+use serialport::SerialPortInfo as SInfo;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub enum DataBits {
@@ -23,8 +21,8 @@ impl From<DataBits> for serialport::DataBits {
         }
     }
 }
-#[derive(Clone, Serialize, Deserialize)]
 
+#[derive(Clone, Serialize, Deserialize)]
 pub enum Parity {
     None,
     Odd,
@@ -134,60 +132,12 @@ impl SerialPortInfo {
     }
 }
 
-// list available ports
-#[flutter_rust_bridge::frb(sync)] // For now to make things easier
-pub fn list_available_ports() -> Result<Vec<SerialPortInfo>, Error> {
-    let ports = serialport::available_ports()?;
-    let mut serial_ports = Vec::new();
-
-    for port in ports {
-        let serial_port = SerialPortInfo::new(
-            port.port_name,
-            9600,
-            DataBits::from(DataBits::Eight),
-            Parity::from(Parity::None),
-            StopBits::from(StopBits::One),
-            FlowControl::from(FlowControl::None),
-        );
-
-        serial_ports.push(serial_port);
-    }
-
-    Ok(serial_ports)
-}
-
-fn main() {
-    match list_available_ports() {
-        Ok(ports) => {
-            if !ports.is_empty() {
-                for p in ports {
-                    println!("Port: {}", p.name);
-                }
-            } else {
-                println!("No ports found.");
-            }
-        }
-
-        Err(e) => {
-            println!("{:?}", e);
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_list_available_ports() {
-        let ports = list_available_ports().unwrap();
-        // println!("{:?}", ports);
-        // print the ports
-        for p in &ports {
-            println!("Port: {}", p.name);
-        }
-
-        // assert that ports is not empty
-        assert!(!ports.is_empty());
+impl Into<serialport::SerialPortBuilder> for SerialPortInfo {
+    fn into(self) -> serialport::SerialPortBuilder {
+        serialport::new(self.name, self.speed)
+            .stop_bits(self.stop_bits.into())
+            .parity(self.parity.into())
+            .flow_control(self.flow_control.into())
+            .data_bits(self.data_bits.into())
     }
 }
