@@ -1,14 +1,13 @@
-use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::{thread, time::Duration};
 
 use crate::frb_generated::StreamSink;
-use anyhow::{anyhow, bail, Ok, Result};
-use flutter_rust_bridge::frb;
-use rand::prelude::*;
-use serialport::Error;
+use anyhow::{anyhow, Ok, Result};
+// use serialport::SerialPortInfo;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread::JoinHandle;
+
+use bitcore::api as bitcore;
 
 struct TerminalRunner {
     thread_id: u32,
@@ -24,7 +23,50 @@ impl TerminalRunner {
         }
     }
 
-    fn main(&self) {
+    fn main_integration_bitcore(&self) {
+        // define shared connection
+        let connection: bitcore::SharedConnection = Arc::new(Mutex::new(None));
+
+        // here we can take a SerialPortInfo
+        let serial_port_info: SerialPortInfo = SerialPortInfo::new(
+            "COM1".to_string(),
+            9600,
+            bitcore::DataBits::Eight,
+            bitcore::Parity::None,
+            bitcore::StopBits::One,
+            bitcore::FlowControl::None,
+        );
+
+        // open connection
+        bitcore::connect(&connection, serial_port_info.name, serial_port_info.speed)
+            .expect("Failed to connect to serial port");
+
+        // send data
+        let write_data = b"TBRUPTIME\r\n";
+        bitcore::write(&connection, write_data).expect("Failed to write data to serial port");
+
+        // read data
+        let mut read_buf = vec![0; 64];
+        let read_data = bitcore::read(&connection, &mut read_buf, Duration::from_millis(1000))
+            .expect("Failed to read data from serial port");
+
+        // verify response
+        let data = String::from_utf8_lossy(&read_buf[..bytes_read]);
+        println!("Received data: {}", data);
+
+        // verify data
+        match data.contains("read uptime request") {
+            true => println!("Data verified"),
+            false => println!("Data not verified"),
+        }
+
+        // close connection
+        bitcore::disconnect(&connection).expect("Failed to disconnect from serial port");
+
+        self.stream.add(data.to_string());
+    }
+
+    fn test_main(&self) {
         let start = std::time::Instant::now();
         let mut count = 0;
         loop {
