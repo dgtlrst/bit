@@ -79,7 +79,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
 abstract class RustLibApi extends BaseApi {
   Stream<String> crateApiControllerTerminalControllerCreateStream(
-      {required TerminalController that});
+      {required TerminalController that, required SerialPortInfo sinfo});
 
   void crateApiControllerTerminalControllerEndStream(
       {required TerminalController that});
@@ -177,13 +177,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Stream<String> crateApiControllerTerminalControllerCreateStream(
-      {required TerminalController that}) {
+      {required TerminalController that, required SerialPortInfo sinfo}) {
     final streamSink = RustStreamSink<String>();
     handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTerminalController(
             that, serializer);
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerSerialPortInfo(
+            sinfo, serializer);
         sse_encode_StreamSink_String_Sse(streamSink, serializer);
         return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
       },
@@ -192,7 +194,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiControllerTerminalControllerCreateStreamConstMeta,
-      argValues: [that, streamSink],
+      argValues: [that, sinfo, streamSink],
       apiImpl: this,
     ));
     return streamSink.stream;
@@ -202,7 +204,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       get kCrateApiControllerTerminalControllerCreateStreamConstMeta =>
           const TaskConstMeta(
             debugName: "TerminalController_create_stream",
-            argNames: ["that", "streamSink"],
+            argNames: ["that", "sinfo", "streamSink"],
           );
 
   @override
@@ -1548,10 +1550,9 @@ class TerminalControllerImpl extends RustOpaque implements TerminalController {
         .instance.api.rust_arc_decrement_strong_count_TerminalControllerPtr,
   );
 
-  Stream<String> createStream() =>
+  Stream<String> createStream({required SerialPortInfo sinfo}) =>
       RustLib.instance.api.crateApiControllerTerminalControllerCreateStream(
-        that: this,
-      );
+          that: this, sinfo: sinfo);
 
   void endStream() =>
       RustLib.instance.api.crateApiControllerTerminalControllerEndStream(

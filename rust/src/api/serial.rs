@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json;
-use serialport::SerialPortInfo as SInfo;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug, Copy)]
 pub enum DataBits {
     Five = 5,
     Six = 6,
@@ -22,7 +21,7 @@ impl From<DataBits> for serialport::DataBits {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Copy, Debug)]
 pub enum Parity {
     None,
     Odd,
@@ -40,7 +39,7 @@ impl From<Parity> for serialport::Parity {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug, Copy)]
 pub enum StopBits {
     One,
     Two,
@@ -55,7 +54,7 @@ impl From<StopBits> for serialport::StopBits {
         }
     }
 }
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug, Copy)]
 pub enum FlowControl {
     None,
     Software,
@@ -74,7 +73,7 @@ impl From<FlowControl> for serialport::FlowControl {
 }
 
 #[flutter_rust_bridge::frb(opaque)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SerialPortInfo {
     pub name: String,
     pub speed: u32,

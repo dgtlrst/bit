@@ -15,7 +15,7 @@ List<SerialPortInfo> listAvailablePorts() =>
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<TerminalController>>
 abstract class TerminalController implements RustOpaqueInterface {
-  Stream<String> createStream();
+  Stream<String> createStream({required SerialPortInfo sinfo});
 
   void endStream();
 

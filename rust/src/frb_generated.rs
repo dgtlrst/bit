@@ -71,6 +71,9 @@ fn wire__crate__api__controller__TerminalController_create_stream_impl(
             let api_that = <RustOpaqueMoi<
                 flutter_rust_bridge::for_generated::RustAutoOpaqueInner<TerminalController>,
             >>::sse_decode(&mut deserializer);
+            let api_sinfo = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<SerialPortInfo>,
+            >>::sse_decode(&mut deserializer);
             let api_stream_sink =
                 <StreamSink<String, flutter_rust_bridge::for_generated::SseCodec>>::sse_decode(
                     &mut deserializer,
@@ -78,22 +81,29 @@ fn wire__crate__api__controller__TerminalController_create_stream_impl(
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let mut api_that_guard = None;
+                let mut api_sinfo_guard = None;
                 let decode_indices_ =
                     flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
                         flutter_rust_bridge::for_generated::LockableOrderInfo::new(
                             &api_that, 0, true,
                         ),
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_sinfo, 1, false,
+                        ),
                     ]);
                 for i in decode_indices_ {
                     match i {
                         0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
+                        1 => api_sinfo_guard = Some(api_sinfo.lockable_decode_sync_ref()),
                         _ => unreachable!(),
                     }
                 }
                 let mut api_that_guard = api_that_guard.unwrap();
+                let api_sinfo_guard = api_sinfo_guard.unwrap();
                 let output_ok = Result::<_, ()>::Ok({
                     crate::api::controller::TerminalController::create_stream(
                         &mut *api_that_guard,
+                        &*api_sinfo_guard,
                         api_stream_sink,
                     );
                 })?;
