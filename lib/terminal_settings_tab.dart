@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bit/src/rust/api/controller.dart';
 import 'package:bit/state_terminal.dart';
 import 'package:bit/src/rust/api/serial.dart';
 import 'package:bit/state_app.dart';

@@ -23,7 +23,7 @@ class TerminalState {
   void connectIfNotConnected() {
     if (!connected) {
       log("Thread $threadId: Connecting");
-      _stream = controller.createStream().asBroadcastStream();
+      _stream = controller.createStream(sinfo: _settings).asBroadcastStream();
       _listener = _stream!.listen(
           streamHandler()); // Stream should exist since we just created the stream
       connected = true;
