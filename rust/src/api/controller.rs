@@ -46,7 +46,7 @@ impl TerminalRunner {
         }
     }
 
-    fn main_integration_bitcore(&self, sinfo: SerialPortInfo) {
+    fn bitcore_action_loop(&self, sinfo: SerialPortInfo) {
         // define shared connection
         let connection: bitcore::SharedConnection = Arc::new(Mutex::new(None));
 
@@ -64,7 +64,7 @@ impl TerminalRunner {
                     // add carriage return and newline to data
                     let data = format!("{}\r\n", data);
 
-                    bitcore::write(&connection, data.as_bytes())
+                    bitcore::write(&connection, data.as_bytes(), 1)
                         .expect("Failed to write data to serial port");
                 }
                 Err(e) => match e {
@@ -84,8 +84,13 @@ impl TerminalRunner {
                 Ok(data) => {
                     let data = String::from_utf8_lossy(&read_buf[..data]);
                     println!("Received data: {}", data);
-                    self.stream
-                        .add(format!("Thread Id: {:?}: Data: {:?}", self.thread_id, data));
+
+                    if let Err(e) = self
+                        .stream
+                        .add(format!("Thread Id: {:?}: Data: {:?}", self.thread_id, data))
+                    {
+                        eprintln!("Failed to add data to stream: {:?}", e);
+                    }
                 }
                 Err(e) => {
                     // no data
@@ -95,55 +100,6 @@ impl TerminalRunner {
 
         // close connection
         bitcore::disconnect(&connection).expect("Failed to disconnect from serial port");
-    }
-
-    fn test_main(&self) {
-        let start = std::time::Instant::now();
-        let mut count = 0;
-        loop {
-            let received_data = self.receiver.try_recv();
-            match received_data {
-                std::result::Result::Ok(data) => {
-                    self.stream
-                        .add(format!("Thread: {:?}, Echoing {:?}", self.thread_id, data));
-                }
-                Err(e) => match e {
-                    std::sync::mpsc::TryRecvError::Empty => {}
-                    std::sync::mpsc::TryRecvError::Disconnected => {
-                        println!("Terminating Thread {:?}", self.thread_id);
-                        break;
-                    }
-                },
-            }
-            let instant = std::time::Instant::now();
-            let time_since_start = instant.duration_since(start);
-            let msgs_missed_since_start = time_since_start.as_secs() - count;
-            if msgs_missed_since_start > 0 {
-                println!(
-                    "Thread Controller {:?}: Time since start: {:?}, Msgs missed since start: {:?}",
-                    self.thread_id,
-                    time_since_start.as_secs().to_string(),
-                    (msgs_missed_since_start as i64 - 1).to_string()
-                );
-                for _i in 0..msgs_missed_since_start {
-                    match self.stream.add(format!(
-                        "Thread: {:?}: {:?}",
-                        self.thread_id, time_since_start
-                    )) {
-                        std::result::Result::Ok(_) => {} // Succesfully Sent Message
-                        Err(_) => {
-                            println!(
-                                "Thread Controller {:?}: Something went wrong.",
-                                self.thread_id
-                            );
-                        }
-                    };
-                    count += 1;
-                }
-            }
-
-            std::thread::sleep(Duration::from_millis(1))
-        }
     }
 }
 
@@ -173,7 +129,7 @@ impl TerminalController {
                                    rx: Receiver<String>,
                                    sinfo: SerialPortInfo| {
             let thread_controller = TerminalRunner::new(thread_id, stream_sink, rx);
-            thread_controller.main_integration_bitcore(sinfo);
+            thread_controller.bitcore_action_loop(sinfo);
         };
         let (tx, rx) = mpsc::channel();
         let thread_id = self.thread_id;
